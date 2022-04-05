@@ -61,7 +61,7 @@ namespace ItemIssues.Web.Features.MicroFrontend.Services
 
             var claims = clauthIdentity.GetClaimsFromClauthIdentity();
 
-            var descriptor = new SecurityTokenDescriptor
+            var securityTokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(_settings?.ClauthSecurityTokenExpirationInDays ?? 0),
@@ -70,7 +70,7 @@ namespace ItemIssues.Web.Features.MicroFrontend.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var securityToken = tokenHandler.CreateToken(descriptor);
+            var securityToken = tokenHandler.CreateToken(securityTokenDescriptor);
 
             return tokenHandler.WriteToken(securityToken);
         }

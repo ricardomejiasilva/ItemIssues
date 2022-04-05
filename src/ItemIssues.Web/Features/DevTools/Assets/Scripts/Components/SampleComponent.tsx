@@ -36,6 +36,29 @@ const SampleComponent = () => {
         }
     };
 
+    const saveSampleData = async (): Promise<void> => {
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                sampleData: sampleData
+            }),
+        };
+        try {
+            const successful = await parseJsonResponse<boolean>(
+                await itemIssuesFetch(
+                    "/DevTools/Sample/SaveSampleData",
+                    requestOptions
+                )
+            );
+            if (successful) {
+                alert("Save Successful");
+            }
+        } catch (error) {
+            alert("Save Failed");
+        }
+    };
+
     useEffect(() => {
         getSampleData();
     }, []);
@@ -68,6 +91,9 @@ const SampleComponent = () => {
                 dataSource={sampleData}
                 columns={columns}
             />
+            <Button type="primary" onClick={saveSampleData}>
+                Test Save
+            </Button>
         </Space>
     );
 };

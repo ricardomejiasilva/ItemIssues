@@ -55,23 +55,23 @@ namespace ItemIssues.Web.Features.MicroFrontend.Queries
 
                 if (asset == null) return null;
 
-                var token = string.Empty;
+                var bearerToken = string.Empty;
 
                 if (!request.IsSandbox)
                 {
-                    token = _viewAssetsService.GetTokenFromClauthIdentity(request.ClauthIdentity);
+                    bearerToken = _viewAssetsService.GetTokenFromClauthIdentity(request.ClauthIdentity);
                 }
 
-                var content = GetContent(asset.Content, token);
+                var content = GetContent(asset.Content, bearerToken);
 
                 var updateAsset = new ViewAssets(asset, content);
 
                 return updateAsset;
             }
 
-            private string GetContent(string assetContent, string token)
+            private string GetContent(string assetContent, string bearerToken)
             {
-                var commonContent = $"<script>window.itemIssuesWebUrl='{_host}';window.bearerToken='{token}';</script><div id='root'></div>";
+                var commonContent = $"<script>window.itemIssuesWebUrl='{_host}';window.bearerToken='{bearerToken}';</script><div id='root'></div>";
 
                 var newContent = assetContent.Replace(ViewAssets.CommonContent, commonContent);
 

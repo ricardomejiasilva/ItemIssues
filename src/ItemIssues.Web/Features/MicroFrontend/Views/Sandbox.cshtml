@@ -1,0 +1,67 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor ContextAccessor
+@model ItemIssues.Web.Features.MicroFrontend.Models.ViewAssets
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sandbox: @Model.ViewName</title>
+    <link rel="stylesheet" href="~/src/wap_css/wap-styles.css" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+<body>
+    <div class="header theme theme--dark">
+        <div class="container-fluid">
+            <button class="action action--open nav-control" aria-label="Open Menu">
+            </button>
+            <a class="header__logo" href="/" style="background-image: url(&quot;../../assets/img/webstaurant-logo-dev.png&quot;);"></a>
+            <div class="header__search input-group input-group-lg">
+                <input id="search" type="search" class="form-control header__input" data-toggle="dropdown" autocomplete="off" placeholder="Search (e.g. email, user ID, product number, cart ref, order ID, RMA, RA)">
+                <ul id="search-dropdown" class="typeahead dropdown-menu" style="display: none;">
+                    <li class="dropdown-item" id="email" data-regex="^(?!\s*$).+">in <strong>Users</strong></li>
+                    <li class="dropdown-item" id="itemNum" data-regex="^(?!\s*$).+">in <strong>Items</strong></li>
+                    <li class="dropdown-item" id="cartRef" data-regex="^(?!\s*$).+">in <strong>Cart Ref</strong></li>
+                    <li class="dropdown-item" id="orderNum" data-regex="^(?!\s*$).+">in <strong>Order/Serial</strong></li>
+                    <li class="dropdown-item" id="paymentPortal" data-regex="^(?!\s*$).+">in <strong>Payment Portal</strong></li>
+                    <li class="dropdown-item" id="ra" data-regex="^(?!\s*$).+">in <strong>RAs</strong></li>
+                    <li class="dropdown-item" id="rma" data-regex="^(?!\s*$).+">in <strong>RMAs</strong></li>
+                </ul>
+            </div>
+        </div><!--End Container Fluid-->
+    </div>
+    <div class="page-wrapper">
+        <nav id="ml-menu" class="menu menu--open theme theme--dark">
+            <nav class="menu__breadcrumbs"><a>Home</a><a>Logistics</a><a>Item Issues</a></nav>
+            <div class="menu__search">
+                <input type="search" id="nav-search" placeholder="Go To Page..." class="form-control menu__input" autocomplete="off"><ul class="typeahead dropdown-menu"></ul>
+            </div>
+            <div class="menu__wrap">
+                <ul data-menu="Logistics/Item Issues" class="menu__level menu__level--current">
+                    <li class="menu__item"><a class="menu__link" data-submenu="Logistics/Item Issues/Reports" href="#">Reports</a></li>
+                    <li class="menu__item"><a class="menu__link menu__link--current" href="/Logistics/ItemIssues/Create">Create</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container-fluid container-fluid--main">
+
+            @foreach (var style in Model.Styles)
+            {
+                <link rel="stylesheet" href="@style" />
+            }
+
+            <div id="root"></div>
+
+            <script src="~/src/wap_js/jquery.js"></script>
+            <script src="~/src/wap_js/moment.js"></script>
+            @Html.Raw(Model.Content)
+
+            @foreach (var script in Model.Scripts)
+            {
+                <script src="@script"></script>
+            }
+        </div>
+    </div>
+</body>
+</html>

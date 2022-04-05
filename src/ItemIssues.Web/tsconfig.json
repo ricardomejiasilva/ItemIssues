@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "module": "esnext",
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowJs": false,
+    "target": "es6",
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "~/*": [ "./wwwroot/src/*" ]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./wwwroot/src/types"
+    ]
+  }
+}

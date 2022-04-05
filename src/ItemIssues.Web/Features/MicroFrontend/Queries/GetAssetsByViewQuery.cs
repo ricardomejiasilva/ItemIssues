@@ -17,7 +17,7 @@ namespace ItemIssues.Web.Features.MicroFrontend.Queries
 
             public Request() { }
 
-            public static Request GetSandoxRequest(string view)
+            public static Request GetSandboxRequest(string view)
             {
                 return new Request(view, isSandbox: true);
             }

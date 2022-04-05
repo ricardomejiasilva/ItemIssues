@@ -9,6 +9,8 @@ namespace ItemIssues.Web.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AuthorizeApiKeyAttribute : Attribute, IAsyncActionFilter
     {
+        private const string _apiKey = "apiKey";
+
         private readonly ApiKeyType _apiKeyType;
 
         public AuthorizeApiKeyAttribute(ApiKeyType apiKeyType)
@@ -46,7 +48,7 @@ namespace ItemIssues.Web.Attributes
 
         private static string? GetRequestApiKey(ActionExecutingContext actionContext)
         {
-            if (actionContext.HttpContext.Request.Query.TryGetValue("apiKey", out var apiKeyFromRequest))
+            if (actionContext.HttpContext.Request.Query.TryGetValue(_apiKey, out var apiKeyFromRequest))
             {
                 return apiKeyFromRequest;
             }

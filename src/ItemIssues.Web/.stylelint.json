@@ -1,0 +1,8 @@
+{
+    "extends": ["stylelint-config-standard", "stylelint-config-recommended"],
+    "ignoreFiles": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+    "rules": {
+        "number-leading-zero": "never",
+        "indentation": 4
+    }
+}

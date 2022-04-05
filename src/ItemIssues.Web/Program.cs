@@ -1,8 +1,12 @@
 using ItemIssues.Core.Extensions;
 using ItemIssues.Web.Config;
+using ItemIssues.Web.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Text;
 
 const string AllowOrigins = "AllowOrigin";
 
@@ -17,9 +21,28 @@ builder.Configuration
     .AddJsonFile($"appsettings.deploy.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-builder.Services.AddControllers();
+builder.Services.AddMvc();
 
 builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(settings.JwtAuthentication?.SigningKey ?? string.Empty)),
+            ValidateActor = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = false,
+            ValidateLifetime = true,
+            ValidateTokenReplay = false,
+        };
+        options.RequireHttpsMetadata = true;
+        options.SaveToken = true;
+    });
+
+builder.Services
+    .AddSingleton(settings)
     .AddCors(options =>
     {
         options.AddPolicy(AllowOrigins,
@@ -42,7 +65,9 @@ builder.Services
         options.CustomSchemaIds(type => type.FullName);
     })
     .AddMediatR(typeof(Program))
-    .AddCoreDependencies();
+    .AddCoreDependencies()
+    .AddProjectDependencies()
+    .AddHttpContextAccessor();
 
 var app = builder.Build();
 

@@ -15961,3 +15961,34 @@ Edit notes:    Created
 .hiddenFromView {
     display: none;
 }
+
+.warning-banner {
+    position: absolute;
+    z-index: 999;
+    right: 0;
+    left: 0;
+    top: 0;
+    padding: 1px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.warning-banner--loc.warning-banner {
+    background-color: #FFCCC7;
+    color: #510013;
+}
+
+.warning-banner--dev.warning-banner {
+    background-color: #FFF1B8;
+    color: #613400;
+}
+
+@media (max-width: 450px) {
+    .warning-banner {
+        font-size: .5rem;
+    }
+}
+
+.warning-banner__text {
+    margin-bottom: 0;
+}

@@ -39,7 +39,6 @@
             }
         }
 
-
         public string DistSubfolderContainingManifest => _viewAsset.DistSubfolderContainingManifest;
 
         public string Content => _viewAsset.Content;

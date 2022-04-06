@@ -18,7 +18,7 @@ namespace ItemIssues.Web.Features.MicroFrontend
         [Route("{viewName}")]
         public async Task<IActionResult> Get(string viewName)
         {
-            var request = GetAssetsByViewQuery.Request.GetSandoxRequest(viewName);
+            var request = GetAssetsByViewQuery.Request.GetSandboxRequest(viewName);
             var viewAssets = await _mediator.Send(request);
 
             return View("~/Features/MicroFrontend/Views/Sandbox.cshtml", viewAssets);

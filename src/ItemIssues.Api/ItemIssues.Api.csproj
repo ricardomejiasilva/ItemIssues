@@ -7,6 +7,8 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Clark.AppFoundations.Health" Version="5.0.0" />
+		<PackageReference Include="Clark.AppFoundations.Logging" Version="5.0.0" />
 		<PackageReference Include="MediatR" Version="10.0.1" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />

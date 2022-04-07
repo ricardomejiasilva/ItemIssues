@@ -1,3 +1,5 @@
+using Clark.AppFoundations.Health.Extensions;
+using Clark.AppFoundations.Logging.Extensions;
 using ItemIssues.Core.Extensions;
 using MediatR;
 using Microsoft.OpenApi.Models;
@@ -5,12 +7,16 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseLogging();
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.deploy.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddStandardHealthChecks(builder.Configuration);
+builder.Services.AddSentry(builder.Configuration);
 builder.Services.AddControllers();
 
 builder.Services
@@ -38,6 +44,7 @@ app.UseHttpsRedirection()
     .UseAuthorization()
     .UseEndpoints(endpoints =>
     {
+        endpoints.MapStandardHealthChecks();
         endpoints.MapControllers();
     })
     .UseSwagger()
@@ -52,6 +59,6 @@ app.UseHttpsRedirection()
         endpoints.MapControllers();
     })
     .UseStaticFiles()
-    .UseHttpsRedirection();
+    .UseCorrelationId();
 
 app.Run();

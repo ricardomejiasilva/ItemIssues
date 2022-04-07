@@ -1,3 +1,5 @@
+using Clark.AppFoundations.Health.Extensions;
+using Clark.AppFoundations.Logging.Extensions;
 using ItemIssues.Core.Extensions;
 using ItemIssues.Web.Config;
 using ItemIssues.Web.Extensions;
@@ -13,6 +15,8 @@ const string AllowOrigins = "AllowOrigin";
 var settings = new ItemIssuesWebSettings();
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseLogging();
+
 builder.Configuration.Bind(settings);
 
 builder.Configuration
@@ -21,6 +25,8 @@ builder.Configuration
     .AddJsonFile($"appsettings.deploy.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddStandardHealthChecks(builder.Configuration);
+builder.Services.AddSentry(builder.Configuration);
 builder.Services.AddMvc();
 
 builder.Services
@@ -82,6 +88,7 @@ app.UseHttpsRedirection()
     .UseAuthorization()
     .UseEndpoints(endpoints =>
     {
+        endpoints.MapStandardHealthChecks();
         endpoints.MapControllers();
     })
     .UseSwagger()
@@ -96,6 +103,6 @@ app.UseHttpsRedirection()
         endpoints.MapControllers();
     })
     .UseStaticFiles()
-    .UseHttpsRedirection();
+    .UseCorrelationId();
 
 app.Run();

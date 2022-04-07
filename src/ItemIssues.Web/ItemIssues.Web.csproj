@@ -12,6 +12,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Clark.AppFoundations.Health" Version="5.0.0" />
+		<PackageReference Include="Clark.AppFoundations.Logging" Version="5.0.0" />
 		<PackageReference Include="Clark.Auth.AspNetCore" Version="3.2.0" />
 		<PackageReference Include="MediatR" Version="10.0.1" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />

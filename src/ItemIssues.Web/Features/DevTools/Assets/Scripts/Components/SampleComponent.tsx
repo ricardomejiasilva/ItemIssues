@@ -9,15 +9,15 @@ interface SampleData {
     name: string;
 }
 
-const SampleComponent = () => {
-    const [sampleText, setSampleText] = useState('Hello World!');
+const SampleComponent = (): JSX.Element => {
+    const [sampleText, setSampleText] = useState("Hello World!");
     const [sampleData, setSampleData] = useState<SampleData[]>([]);
 
-    const onButtonClick = () => {
+    const onButtonClick = (): void => {
         alert(sampleText);
     };
 
-    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const { value } = e.target;
         setSampleText(value);
     };
@@ -25,10 +25,7 @@ const SampleComponent = () => {
     const getSampleData = async (): Promise<void> => {
         try {
             const response = await parseJsonResponse<SampleData[]>(
-                await itemIssuesFetch(
-                    "/DevTools/Sample/GetSampleData",
-                    null
-                )
+                await itemIssuesFetch("/DevTools/Sample/GetSampleData", null)
             );
             setSampleData(response);
         } catch (error) {
@@ -41,7 +38,7 @@ const SampleComponent = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                sampleData: sampleData
+                sampleData: sampleData,
             }),
         };
         try {
@@ -65,15 +62,15 @@ const SampleComponent = () => {
 
     const columns = [
         {
-            title: 'Id',
-            dataIndex: 'id',
-            key: 'id',
+            title: "Id",
+            dataIndex: "id",
+            key: "id",
         },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-        }
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+        },
     ];
 
     return (

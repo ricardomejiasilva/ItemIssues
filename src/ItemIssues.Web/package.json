@@ -81,7 +81,7 @@
   "scripts": {
     "watch": "cross-env NODE_OPTIONS=--max_old_space_size=8192 webpack --watch --mode development --color",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 webpack --mode production",
-    "test": "cross-env NODE_OPTIONS=--max_old_space_size=8192 jest",
+    "test": "cross-env NODE_OPTIONS=--max_old_space_size=8192 jest --passWithNoTests",
     "lint": "eslint --ext .jsx,.js,.ts,.tsx Features",
     "lint-fix": "eslint --ext .jsx,.js,.ts,.tsx --fix Features",
     "prettier": "prettier --write Features/"

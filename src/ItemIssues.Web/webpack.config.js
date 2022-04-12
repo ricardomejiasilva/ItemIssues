@@ -11,6 +11,7 @@ module.exports = (env, args) => {
         entry: {
             'assets/styles': '../Theme.less', // Allows Ant Styles to be bundled once
             'devtools/sample': './DevTools/Assets/Scripts/Sample.js',
+            'itemIssues/itemIssues': './ItemIssues/Assets/Scripts/ItemIssues.js',
         },
         devtool: 'source-map',
         mode: args ? args.mode : 'development',

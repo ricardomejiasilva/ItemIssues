@@ -39,6 +39,12 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    app.Logger.LogInformation("The application {0} started", app.Environment.ApplicationName);
+    app.Logger.LogInformation("Listening on {0}", string.Join(", ", app.Urls));
+});
+
 app.UseHttpsRedirection()
     .UseRouting()
     .UseAuthorization()

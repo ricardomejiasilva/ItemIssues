@@ -21,7 +21,7 @@
 
         /// <summary>
         /// Html to be displayed on the view.
-        /// Default behavior provides a root element to render on and a global javascript variable 'partnersAdminApiUrl'
+        /// Default behavior provides a root element to render on and a global javascript variable 'itemIssuesWebUrl'
         /// to be utilized for fetch calls.
         /// </summary>
         string Content { get; }

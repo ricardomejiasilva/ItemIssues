@@ -43,7 +43,7 @@ const rules = {
 const alias = {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.less'],
     map: [
-        ["partners-styles", "./Assets/Styles"]
+        ["item-issues-styles", "./Assets/Styles"]
     ],
 };
 

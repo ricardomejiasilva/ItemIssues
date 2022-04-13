@@ -1,8 +1,8 @@
 ﻿import merge from 'lodash/merge';
 
 /**
- * Sets up a common fetch for communicating with Partners Admin API.
- * You must assign a Partners Admin API host value into a window variable 'itemIssuesUrl' to use this function!
+ * Sets up a common fetch for communicating with Item Issues Web.
+ * You must assign a Item Issues Web host value into a window variable 'itemIssuesUrl' to use this function!
  * @param {RequestInfo} url the url path, without the host
  * @param {RequestInit} options init object used in a fetch, credentials 'include' is set by default
  * @return {Promise<Response>} A fetch Promise or json response promise

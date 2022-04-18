@@ -28,6 +28,8 @@ builder.Configuration
 builder.Services.AddStandardHealthChecks(builder.Configuration);
 builder.Services.AddSentry(builder.Configuration);
 builder.Services.AddMvc();
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

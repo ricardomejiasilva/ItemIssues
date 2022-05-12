@@ -21,7 +21,7 @@ namespace ItemIssues.Web.Features.MicroFrontend
             var request = GetAssetsByViewQuery.Request.GetSandboxRequest(viewName);
             var viewAssets = await _mediator.Send(request);
 
-            return View("~/Features/MicroFrontend/Views/Sandbox.cshtml", viewAssets);
+            return View("~/Features/ItemIssues/MicroFrontend/Views/Sandbox.cshtml", viewAssets);
         }
     }
 }

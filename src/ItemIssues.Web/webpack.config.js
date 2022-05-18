@@ -60,6 +60,9 @@ module.exports = (env, args) => {
                         {
                             loader: "less-loader",
                             options: {
+                                modifyVars: {
+                                    'border-radius-base': '4px',
+                                             },
                                 javascriptEnabled: true
                             }
                         }

@@ -1,11 +1,16 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import "../../Styles/IssueDrawerItem.less";
 import "../../Styles/ItemIssues.less";
 import React, { useState, useContext } from "react";
 import { CalculatorFilled, CheckCircleOutlined } from "@ant-design/icons";
+import { dataSource } from "./Data/ItemData";
 import ResolutionOption from "./ResolutionSelect/ResolutionOption";
 import ShipmentInfo from "./ResolutionSelect/ShipmentInfo";
-import { StateContext } from "./ItemIssues";
+import { AlignType } from "rc-table/lib/interface";
+import {
+    StateContext,
+    SavedItemsContext,
+    OpenItemsContext,
+} from "./ItemIssues";
 import {
     Row,
     Col,
@@ -26,24 +31,36 @@ const { Panel } = Collapse;
 const { Option } = Select;
 const { Text } = Typography;
 
-const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
+const IssueDrawerItem = ({
+    index,
+    itemType,
+}: {
+    index: number;
+    itemType: any;
+}): JSX.Element => {
     const createdIssues = useContext(StateContext);
     const [resolution, setResolution] = useState<string>("");
     const [convertedValue, setConvertedValue] = useState(
         createdIssues[index].price
     );
+    const [openPanel, setOpenPanel] = useState([index.toString()]);
+    const { savedItems, setSavedItems } = useContext(SavedItemsContext);
+    const { openItems, setOpenItems } = useContext(OpenItemsContext);
 
-    function handleChange(value: string, amount: number) {
+    const convertCurrency = (value: string, amount: number) => {
         if (value === "$") setConvertedValue(amount);
         if (value === "€")
             setConvertedValue(Math.ceil(amount * 0.95 * 100) / 100);
-    }
+    };
 
-    const success = () => {
+    const openMessage = () => {
         message.success({
             content: (
                 <>
-                    <Text>Item Issue Successfully Opened</Text> <br />
+                    <Text className="message">
+                        Item Issue Successfully Opened
+                    </Text>{" "}
+                    <br />
                     <Text className="message-text">
                         Your item issues have been successfully <br />
                         <span className="message-text__subtext">opened</span>
@@ -53,7 +70,27 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
             className: "success-message",
             icon: <CheckCircleOutlined />,
             style: {
-                textAlign: "right",
+                textAlign: "right" as AlignType,
+                marginRight: 36,
+            },
+        });
+    };
+
+    const saveMessage = () => {
+        message.success({
+            content: (
+                <>
+                    <Text>Item Issue Successfully saved for Lates</Text> <br />
+                    <Text className="message-text">
+                        Your item issues have been successfully saved for <br />
+                        <span className="message-text__subtext">later.</span>
+                    </Text>
+                </>
+            ),
+            className: "success-message",
+            icon: <CheckCircleOutlined />,
+            style: {
+                textAlign: "right" as AlignType,
                 marginRight: 36,
             },
         });
@@ -62,7 +99,7 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
     const selectBefore = (
         <Select
             onChange={(value) =>
-                handleChange(value, createdIssues[index].price)
+                convertCurrency(value, createdIssues[index].price)
             }
             defaultValue="$"
             className="select-before"
@@ -81,12 +118,12 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
                 <div className="item-details">
                     <div>
                         <Tag className="item-details__tag">
-                            <img src={createdIssues[index].image} alt="item" />
+                            <img src={itemType[index].image} alt="item" />
                         </Tag>
                     </div>
                     <div className="tem-details__description">
-                        <a href="/">{createdIssues[index].name}</a>
-                        <p>{createdIssues[index].itemNumber}</p>
+                        <a href="/">{itemType[index].name}</a>
+                        <p>{itemType[index].itemNumber}</p>
                     </div>
                 </div>
             ),
@@ -95,13 +132,13 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
             title: "Warehouse",
             dataIndex: "warehouse",
             key: "warehouse",
-            align: "center",
+            align: "center" as AlignType,
         },
         {
             title: "Quantity",
             dataIndex: "quantity",
             key: "quantity",
-            align: "center",
+            align: "center" as AlignType,
         },
         {
             title: "Price",
@@ -118,34 +155,73 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
         },
     ];
 
+    const addSavedItem = () => {
+        dataSource.forEach((item) => {
+            if (item.key === createdIssues[index].key) {
+                item.status = "saved";
+            }
+        });
+        createdIssues[index].status = "saved";
+        setSavedItems([...savedItems, createdIssues[index]]);
+        saveMessage();
+        setOpenPanel(null);
+    };
+
+    const addOpenItem = () => {
+        dataSource.forEach((item) => {
+            if (item.key === createdIssues[index].key) {
+                item.status = "open";
+            }
+        });
+        createdIssues[index].status = "open";
+        setOpenItems([...openItems, createdIssues[index]]);
+        openMessage();
+        setOpenPanel(null);
+    };
+
+    console.log(itemType);
+
     return (
         <>
             <Row className="drawer-item">
-                <Collapse defaultActiveKey={["1"]}>
+                <Collapse
+                    activeKey={openPanel}
+                    onChange={() => setOpenPanel(() => [index.toString()])}
+                >
                     <Panel
                         header={
                             <>
                                 <Text strong>
-                                    {createdIssues[index].issueType +
+                                    {itemType[index].issueType +
                                         " > " +
-                                        createdIssues[index].issueSubCategory}
+                                        itemType[index].issueSubCategory}
                                 </Text>
-                                <Tag
-                                    className="drawer-item__panel-tag"
-                                    color="green"
-                                >
-                                    Open
-                                </Tag>
+                                {itemType.status === "saved" && (
+                                    <Tag
+                                        className="drawer-item__saved-tag"
+                                        color="gold"
+                                    >
+                                        Saved
+                                    </Tag>
+                                )}
+                                {itemType.status === "open" && (
+                                    <Tag
+                                        className="drawer-item__open-tag"
+                                        color="green"
+                                    >
+                                        Open
+                                    </Tag>
+                                )}
                             </>
                         }
-                        key="1"
+                        key={index}
                     >
                         <Row className="drawer-item__item-table">
                             <Spin spinning={false}>
                                 <Table
                                     pagination={false}
                                     columns={columns}
-                                    dataSource={[createdIssues[index]]}
+                                    dataSource={[itemType[index]]}
                                 />
                             </Spin>
                         </Row>
@@ -161,7 +237,6 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
                                     >
                                         <Form.Item
                                             label="Resolution"
-                                            name="Select Resolution"
                                             className="drawer-item__resolution-input"
                                             wrapperCol={{
                                                 span: 30,
@@ -170,7 +245,7 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
                                                 {
                                                     required: true,
                                                     message:
-                                                        "Please input your username!",
+                                                        "Must select resolution to create issue",
                                                 },
                                             ]}
                                         >
@@ -198,6 +273,7 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
                                     {resolution.length > 1 && (
                                         <ResolutionOption
                                             resolution={resolution}
+                                            index={index}
                                         />
                                     )}
                                 </Row>
@@ -214,12 +290,19 @@ const IssueDrawerItem = ({ index }: { index: number }): JSX.Element => {
                                     <Button>Cancel Issue</Button>
                                 </Col>
                                 <Col>
-                                    <Button type="primary" ghost>
-                                        Save All for Later
+                                    <Button
+                                        onClick={addSavedItem}
+                                        type="primary"
+                                        ghost
+                                    >
+                                        Save for Later
                                     </Button>
                                 </Col>
                                 <Col>
-                                    <Button onClick={success} type="primary">
+                                    <Button
+                                        onClick={addOpenItem}
+                                        type="primary"
+                                    >
                                         Create Issue
                                     </Button>
                                 </Col>

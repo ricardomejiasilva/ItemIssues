@@ -1,11 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from "react";
+import React, { useContext } from "react";
 import IssueDrawerItem from "./IssueDrawerItem";
 import "../../Styles/IssuesDrawer.less";
 import HistoryItem from "./ResolutionSelect/HistoryItem";
-import { Row, Col, Typography, Input, Layout, Space, Button, Form } from "antd";
+import { SavedItemsContext, OpenItemsContext } from "./ItemIssues";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import {
+    Row,
+    Col,
+    Typography,
+    Input,
+    Layout,
+    Space,
+    Button,
+    Form,
+    Alert,
+} from "antd";
 
 interface CreatedIssues {
     key: string;
@@ -33,6 +42,8 @@ const IssuesDrawer = ({
     activeTab: string;
     createdIssues: CreatedIssues[];
 }): JSX.Element => {
+    const { savedItems } = useContext(SavedItemsContext);
+    const { openItems } = useContext(OpenItemsContext);
     return (
         <>
             <Row className="drawer-container">
@@ -85,7 +96,7 @@ const IssuesDrawer = ({
                                                 {
                                                     required: true,
                                                     message:
-                                                        "Please input briefcase number!",
+                                                        "Must enter Briefcase #",
                                                 },
                                             ]}
                                         >
@@ -108,7 +119,10 @@ const IssuesDrawer = ({
                                                         },
                                                     ]}
                                                 >
-                                                    <TextArea rows={1} />
+                                                    <TextArea
+                                                        placeholder="Add global comment"
+                                                        rows={1}
+                                                    />
                                                 </Form.Item>
                                             </Col>
                                             <Col>
@@ -125,11 +139,36 @@ const IssuesDrawer = ({
                                 </Row>
                             </Form>
                         )}
-                        {createdIssues.map((_: null, index: number) => {
-                            return (
-                                <IssueDrawerItem key={index} index={index} />
-                            );
-                        })}
+                        {activeTab === "0" &&
+                            createdIssues.map((_: null, index: number) => {
+                                return (
+                                    <IssueDrawerItem
+                                        key={index}
+                                        index={index}
+                                        itemType={createdIssues}
+                                    />
+                                );
+                            })}
+                        {activeTab === "1" &&
+                            savedItems.map((_: null, index: number) => {
+                                return (
+                                    <IssueDrawerItem
+                                        key={index}
+                                        index={index}
+                                        itemType={savedItems}
+                                    />
+                                );
+                            })}
+                        {activeTab == "2" &&
+                            openItems.map((_: null, index: number) => {
+                                return (
+                                    <IssueDrawerItem
+                                        key={index}
+                                        index={index}
+                                        itemType={openItems}
+                                    />
+                                );
+                            })}
 
                         {activeTab !== "0" && (
                             <Row className="history-container">
@@ -149,29 +188,44 @@ const IssuesDrawer = ({
                                 </Col>
                             </Row>
                         )}
-
                         <Footer className="footer">
-                            <Row justify="end">
-                                <Space size={16}>
-                                    <Col>
-                                        <Button type="primary" danger ghost>
-                                            Cancel Issue
-                                        </Button>
-                                    </Col>
-                                    <Col>
-                                        <Button type="primary" ghost>
-                                            Save All for Later
-                                        </Button>
-                                    </Col>
-                                    <Col>
-                                        <Button
-                                            className="create-btn"
-                                            type="primary"
-                                        >
-                                            Create Issue
-                                        </Button>
-                                    </Col>
-                                </Space>
+                            <Row justify="space-between">
+                                <Col>
+                                    <Alert
+                                        className="hidden"
+                                        message="To create issues, fix errors or create issue individually"
+                                        type="error"
+                                        showIcon
+                                    />
+                                </Col>
+                                <Col>
+                                    <Row>
+                                        <Space size={16}>
+                                            <Col>
+                                                <Button
+                                                    type="primary"
+                                                    danger
+                                                    ghost
+                                                >
+                                                    Cancel Issue
+                                                </Button>
+                                            </Col>
+                                            <Col>
+                                                <Button type="primary" ghost>
+                                                    Save All for Later
+                                                </Button>
+                                            </Col>
+                                            <Col>
+                                                <Button
+                                                    className="create-btn"
+                                                    type="primary"
+                                                >
+                                                    Create Issue
+                                                </Button>
+                                            </Col>
+                                        </Space>
+                                    </Row>
+                                </Col>
                             </Row>
                         </Footer>
                     </Col>

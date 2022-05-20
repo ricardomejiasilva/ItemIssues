@@ -1,17 +1,24 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from "react";
+import React, { useContext } from "react";
 import "../../../Styles/PaymentCredit.less";
 import { Input, Form, Checkbox, Typography, Space, Alert, Popover } from "antd";
 import { InfoCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
-
+import { StateContext } from "../ItemIssues";
 const { Text } = Typography;
 const { TextArea } = Input;
 
+enum ResolutionType {
+    storeCredit = "store credit",
+    paymentCredit = "payment credit",
+}
+
 const ResolutionOption = ({
     resolution,
+    index,
 }: {
     resolution: string;
+    index: number;
 }): JSX.Element => {
+    const createdIssues = useContext(StateContext);
     return (
         <>
             <Form colon={false} className="resolutions">
@@ -19,7 +26,7 @@ const ResolutionOption = ({
                     name="return item"
                     label="Return Item"
                     className={
-                        resolution !== "payment credit"
+                        resolution !== ResolutionType.paymentCredit
                             ? "return-item hidden"
                             : "return-item"
                     }
@@ -30,7 +37,7 @@ const ResolutionOption = ({
                     labelAlign="right"
                     name="refund check"
                     className={
-                        resolution !== "payment credit"
+                        resolution !== ResolutionType.paymentCredit
                             ? "refund-check hidden"
                             : "refund-check"
                     }
@@ -48,7 +55,7 @@ const ResolutionOption = ({
                     <Input disabled addonBefore="$" defaultValue="$34.39" />
                 </Form.Item>
                 <Form.Item
-                    className="inconvenience-credit"
+                    className="resolutions__inconvenience-credit"
                     label="Inconvenience Credit"
                 >
                     <Input addonBefore="$" defaultValue="$0.00" />
@@ -62,7 +69,7 @@ const ResolutionOption = ({
                 <Form.Item
                     name="return item"
                     className={
-                        resolution !== "store credit"
+                        resolution !== ResolutionType.storeCredit
                             ? "return-item hidden"
                             : "return-item"
                     }
@@ -70,12 +77,12 @@ const ResolutionOption = ({
                     <Checkbox>Return Item</Checkbox>
                     <Popover
                         className="resolutions__popover"
-                        content="Return will always be created for Carrier > Lost, so the warehouse can keep track of the item(s) if they’re found and returned by carrier."
+                        content={`Return will always be created for ${createdIssues[index].issueType} > ${createdIssues[index].issueSubCategory}, so the warehouse can keep track of the item(s) if they’re found and returned by carrier.`}
                     >
                         <InfoCircleOutlined />
                     </Popover>
                 </Form.Item>
-                {resolution == "store credit" && (
+                {resolution === ResolutionType.storeCredit && (
                     <Alert
                         message="A Credit Due: No return will be automatically created."
                         type="error"
@@ -87,12 +94,26 @@ const ResolutionOption = ({
 
                 <Space direction="vertical" size={20} style={{ width: "100%" }}>
                     <Text strong>
-                        Total Payment Credit
+                        Total
+                        {resolution === ResolutionType.storeCredit
+                            ? " Store "
+                            : " Payment "}
+                        Credit
                         <span className="resolutions__credit-amount">
                             $34.39
                         </span>
                     </Text>
-                    <Form.Item className="comment" required label="Comments">
+                    <Form.Item
+                        className="comment"
+                        label="Comments"
+                        required
+                        rules={[
+                            {
+                                required: true,
+                                message: "Must enter comment to create issue",
+                            },
+                        ]}
+                    >
                         <TextArea />
                     </Form.Item>
                 </Space>

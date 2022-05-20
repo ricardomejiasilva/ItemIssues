@@ -6,6 +6,7 @@ export const dataSource = [
         price: 34.39,
         itemNumber: "251ESPBNVBCX",
         image: "https://i.postimg.cc/Qt5fsrS6/Rectangle-277.png",
+        status: "",
     },
     {
         key: "2",
@@ -14,6 +15,7 @@ export const dataSource = [
         price: 95.45,
         itemNumber: "646ESPBNMKUH",
         image: "https://i.postimg.cc/9Fs8PP2s/Rectangle-277.png",
+        status: "",
     },
     {
         key: "3",
@@ -22,6 +24,7 @@ export const dataSource = [
         price: 12.59,
         itemNumber: "952ESPDFGILK",
         image: "https://i.postimg.cc/NM0kvLY1/Rectangle-277.png",
+        status: "",
     },
     {
         key: "4",
@@ -30,5 +33,6 @@ export const dataSource = [
         price: 35.99,
         itemNumber: "645ESPDFGILK",
         image: "https://i.postimg.cc/qMKxwYp0/Rectangle-277.png",
+        status: "",
     },
 ];

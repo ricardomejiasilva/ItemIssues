@@ -1,14 +1,12 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useState, useEffect, createContext } from "react";
+﻿import React, { useState, createContext } from "react";
 import "../../Styles/ItemIssues.less";
 import "antd/dist/antd.css";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import IssuesDrawer from "./IssuesDrawer";
 import { dataSource } from "./Data/ItemData";
-import { dataSourceOpen } from "./Data/ItemDataOpen";
-import { dataSourceSaved } from "./Data/ItemDataSaved";
 import { issueInfo } from "./Data/IssueInfo";
+import { issueSelection } from "./Data/IssueSelection";
+import { AlignType } from "rc-table/lib/interface";
 import {
     Table,
     Tabs,
@@ -39,6 +37,7 @@ interface Record {
     name: string;
     price: number;
     warehouse: number;
+    status: string;
 }
 
 interface CreatedIssues {
@@ -50,20 +49,19 @@ interface CreatedIssues {
     name: string;
     price: number;
     quantity: number;
+    status: string;
+}
+interface Value {
+    label: string;
+    value: string;
+    key: string;
+    disabled: boolean;
 }
 
-export const StateContext = createContext<CreatedIssues[]>([
-    {
-        key: "",
-        name: "",
-        price: 0,
-        itemNumber: "",
-        image: "",
-        quantity: 0,
-        issueType: "",
-        issueSubCategory: "",
-    },
-]);
+export const StateContext = createContext<CreatedIssues[]>([]);
+
+export const SavedItemsContext = createContext<any>([]);
+export const OpenItemsContext = createContext<any>([]);
 
 const ItemIssues = (): JSX.Element => {
     const { Title, Text } = Typography;
@@ -79,19 +77,19 @@ const ItemIssues = (): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>("0");
 
     const [createdIssues, setCreatedIssues] = useState<CreatedIssues[]>([]);
-    const [savedItems, setSavedItems] = useState<Input[]>([]);
-    const [openItems, setOpenItems] = useState<Input[]>([]);
+    const [savedItems, setSavedItems] = useState<any>([]);
+    const [openItems, setOpenItems] = useState<any>([]);
 
     const updateInput = (
-        value: string,
+        value: Value,
         record: string,
         updateState: React.Dispatch<React.SetStateAction<Input[]>>,
         state: Input[]
     ) => {
         const recordedObj = {
-            id: record as string,
-            key: value.key as string,
-            value: value.value as string,
+            id: record,
+            key: value.key,
+            value: value.value,
         };
 
         let updatedObj;
@@ -118,8 +116,6 @@ const ItemIssues = (): JSX.Element => {
                 return quantity
                     .map((obj, index) => {
                         if (item.key === obj.id) {
-                            console.log(obj.value);
-
                             return {
                                 ...item,
                                 quantity: parseInt(obj.value),
@@ -136,6 +132,18 @@ const ItemIssues = (): JSX.Element => {
         setIssueDrawerCollapsed(false);
 
         return setCreatedIssues(addInputInfo);
+    };
+
+    const getSubTypes = (record: Record) => {
+        const selectedType = type.find((item) => record.key === item.id);
+        if (!selectedType) return null;
+        const selectedIssue = issueSelection.find(
+            (item) => selectedType.key === item.type
+        );
+        if (!selectedIssue) return null;
+        return selectedIssue.subTypes.map((value) => {
+            return { value };
+        });
     };
 
     const addItemRow = () => {
@@ -160,6 +168,10 @@ const ItemIssues = (): JSX.Element => {
         );
     };
 
+    const updateKey = (activeKey: string) => {
+        setActiveTab(() => activeKey);
+    };
+
     const columns = [
         {
             title: "Item",
@@ -181,12 +193,29 @@ const ItemIssues = (): JSX.Element => {
         },
         {
             title: "Status",
+            dataIndex: "status",
+            key: "status",
+            align: "center" as AlignType,
+            render: (_: null, record: Record) => {
+                return (
+                    record.status && (
+                        <Tag
+                            className={`drawer-item__${
+                                record.status === "open" ? "open" : "saved"
+                            }-tag`}
+                            color={record.status === "open" ? "green" : "gold"}
+                        >
+                            {record.status === "open" ? "Open" : "Saved"}
+                        </Tag>
+                    )
+                );
+            },
         },
         {
             title: "Shipped From",
             dataIndex: "warehouse",
             key: "warehouse",
-            align: "center",
+            align: "center" as AlignType,
         },
         {
             title: "Price",
@@ -229,11 +258,20 @@ const ItemIssues = (): JSX.Element => {
                     <Option key="carrier error" value="Carrier Error">
                         Carrier Error
                     </Option>
+                    <Option
+                        key="plus membership cancellation"
+                        value="Plus Membership Cancellation"
+                    >
+                        Plus Membership Cancellation
+                    </Option>
                     <Option key="product complaints" value="Product Complaints">
                         Product Complaints
                     </Option>
                     <Option key="standard return" value="Standard Return">
                         Standard Return
+                    </Option>
+                    <Option key="vendor error" value="Standard Return">
+                        Vendor Error
                     </Option>
                     <Option key="warehouse error" value="Warehouse Error">
                         Warehouse Error
@@ -258,23 +296,8 @@ const ItemIssues = (): JSX.Element => {
                         onChange={(value) => {
                             updateInput(value, record.key, setIssue, issue);
                         }}
-                    >
-                        <Option key="defective" value="Defective">
-                            Defective
-                        </Option>
-                        <Option key="melted" value="Melted">
-                            Melted
-                        </Option>
-                        <Option key="spoiled" value="Spoiled">
-                            Spoiled
-                        </Option>
-                        <Option key="unhappy" value="Unhappy">
-                            Unhappy w/ Quality
-                        </Option>
-                        <Option key="used" value="Used">
-                            Used
-                        </Option>
-                    </Select>
+                        options={getSubTypes(record)}
+                    />
                     {issue.some((obj: Input) => obj.id == record.key) && (
                         <Popover
                             content={issueInfo[0].text}
@@ -306,243 +329,290 @@ const ItemIssues = (): JSX.Element => {
     return (
         <>
             <StateContext.Provider value={createdIssues}>
-                <Layout className="layout">
-                    <Content className="content">
-                        <Row>
-                            <div className="relative-path">
-                                <a className="relative-path__home" href="/">
-                                    Home{" "}
-                                </a>
-                                <p>/</p>
-                                <a href="/">Content</a>
-                                <p>/</p>
-                            </div>
-                        </Row>
-
-                        <Row>
-                            <Title level={3}>
-                                Add Item Issues for Order # {63547057}
-                            </Title>
-                        </Row>
-                        <Space
-                            direction="vertical"
-                            size={16}
-                            className="full-width"
-                        >
-                            <Col>
-                                <Row className="display-block">
-                                    <Tabs
-                                        type="card"
-                                        onChange={(activeKey) =>
-                                            setActiveTab(activeKey)
-                                        }
-                                    >
-                                        <TabPane
-                                            tab={
-                                                <div>
-                                                    <Tag>
-                                                        {dataSource.length}
-                                                    </Tag>
-                                                    <Text className="tab-text">
-                                                        Items
-                                                    </Text>
-                                                </div>
-                                            }
-                                            key="0"
-                                        >
-                                            <Space
-                                                direction="vertical"
-                                                size={16}
-                                                className="full-width"
-                                            >
-                                                <Col>{addItemRow()}</Col>
-                                                <Col>
-                                                    <Row>
-                                                        <Col span={24}>
-                                                            <Spin
-                                                                spinning={false}
-                                                            >
-                                                                <Table
-                                                                    rowClassName={(
-                                                                        record
-                                                                    ) => {
-                                                                        if (
-                                                                            issue.length >
-                                                                                0 &&
-                                                                            issue.some(
-                                                                                (
-                                                                                    item: Input
-                                                                                ) =>
-                                                                                    record.key ===
-                                                                                    item.id
-                                                                            )
-                                                                        )
-                                                                            return "highlighted";
-                                                                    }}
-                                                                    pagination={
-                                                                        false
-                                                                    }
-                                                                    columns={
-                                                                        columns
-                                                                    }
-                                                                    dataSource={
-                                                                        dataSource
-                                                                    }
-                                                                />
-                                                            </Spin>
-                                                        </Col>
-                                                    </Row>
-                                                </Col>
-                                            </Space>
-                                        </TabPane>
-                                        <TabPane
-                                            tab={
-                                                <div>
-                                                    <Tag>1</Tag>
-                                                    <Text className="tab-text">
-                                                        Saved
-                                                    </Text>
-                                                </div>
-                                            }
-                                            key="1"
-                                        >
-                                            <Space
-                                                direction="vertical"
-                                                size={16}
-                                            >
-                                                <Col>{addItemRow()}</Col>
-                                                <Col>
-                                                    <Row>
-                                                        <Col span={24}>
-                                                            <Spin
-                                                                spinning={false}
-                                                            >
-                                                                <Table
-                                                                    rowClassName={(
-                                                                        record
-                                                                    ) => {
-                                                                        if (
-                                                                            issue.length >
-                                                                                0 &&
-                                                                            issue.some(
-                                                                                (
-                                                                                    item: Input
-                                                                                ) =>
-                                                                                    record.key ===
-                                                                                    item.id
-                                                                            )
-                                                                        )
-                                                                            return "highlighted";
-                                                                    }}
-                                                                    pagination={
-                                                                        false
-                                                                    }
-                                                                    columns={
-                                                                        columns
-                                                                    }
-                                                                    dataSource={
-                                                                        dataSourceSaved
-                                                                    }
-                                                                />
-                                                            </Spin>
-                                                        </Col>
-                                                    </Row>
-                                                </Col>
-                                            </Space>
-                                        </TabPane>
-                                        <TabPane
-                                            tab={
-                                                <div>
-                                                    <Tag>1</Tag>
-                                                    <Text className="tab-text">
-                                                        Open
-                                                    </Text>
-                                                </div>
-                                            }
-                                            key="2"
-                                        >
-                                            <Space
-                                                direction="vertical"
-                                                size={16}
-                                            >
-                                                <Col>{addItemRow()}</Col>
-
-                                                <Col>
-                                                    <Row>
-                                                        <Col span={24}>
-                                                            <Spin
-                                                                spinning={false}
-                                                            >
-                                                                <Table
-                                                                    rowClassName={(
-                                                                        record
-                                                                    ) => {
-                                                                        if (
-                                                                            issue.length >
-                                                                                0 &&
-                                                                            issue.some(
-                                                                                (
-                                                                                    item: Input
-                                                                                ) =>
-                                                                                    record.key ===
-                                                                                    item.id
-                                                                            )
-                                                                        )
-                                                                            return "highlighted";
-                                                                    }}
-                                                                    pagination={
-                                                                        false
-                                                                    }
-                                                                    columns={
-                                                                        columns
-                                                                    }
-                                                                    dataSource={
-                                                                        dataSourceOpen
-                                                                    }
-                                                                />
-                                                            </Spin>
-                                                        </Col>
-                                                    </Row>
-                                                </Col>
-                                            </Space>
-                                        </TabPane>
-                                    </Tabs>
-                                </Row>
-                            </Col>
-                            <Col>
-                                <Row justify="end">
-                                    <Col>
-                                        <Button
-                                            disabled={issue.length === 0}
-                                            type="primary"
-                                            onClick={createIssue}
-                                        >
-                                            Create Issue(s)
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Space>
-                    </Content>
-                    <Sider
-                        trigger={null}
-                        className="sider"
-                        collapsible
-                        theme={"light"}
-                        collapsed={issueDrawerCollapsed}
-                        collapsedWidth={48}
-                        width="1073px"
+                <SavedItemsContext.Provider
+                    value={{ savedItems, setSavedItems }}
+                >
+                    <OpenItemsContext.Provider
+                        value={{ openItems, setOpenItems }}
                     >
-                        <IssuesDrawer
-                            {...{
-                                collapsed: issueDrawerCollapsed,
-                                setCollapsed: setIssueDrawerCollapsed,
-                                activeTab,
-                                createdIssues,
-                            }}
-                        />
-                    </Sider>
-                </Layout>
+                        <Layout className="layout">
+                            <Content className="content">
+                                <Row>
+                                    <div className="relative-path">
+                                        <a
+                                            className="relative-path__home"
+                                            href="/"
+                                        >
+                                            Home{" "}
+                                        </a>
+                                        <p>/</p>
+                                        <a href="/">Content</a>
+                                        <p>/</p>
+                                    </div>
+                                </Row>
+                                <Row>
+                                    <Title level={3}>
+                                        Add Item Issues for Order # {63547057}
+                                    </Title>
+                                </Row>
+                                <Space
+                                    direction="vertical"
+                                    size={16}
+                                    className="full-width"
+                                >
+                                    <Col>
+                                        <Row className="display-block">
+                                            <Tabs
+                                                type="card"
+                                                onChange={(activeKey) =>
+                                                    updateKey(activeKey)
+                                                }
+                                            >
+                                                <TabPane
+                                                    key="0"
+                                                    tab={
+                                                        <div>
+                                                            <Tag>
+                                                                {
+                                                                    dataSource.length
+                                                                }
+                                                            </Tag>
+                                                            <Text className="tab-text">
+                                                                Items
+                                                            </Text>
+                                                        </div>
+                                                    }
+                                                >
+                                                    <Space
+                                                        direction="vertical"
+                                                        size={16}
+                                                        className="full-width"
+                                                    >
+                                                        <Col>
+                                                            {addItemRow()}
+                                                        </Col>
+                                                        <Col>
+                                                            <Row>
+                                                                <Col span={24}>
+                                                                    <Spin
+                                                                        spinning={
+                                                                            false
+                                                                        }
+                                                                    >
+                                                                        <Table
+                                                                            rowClassName={(
+                                                                                record
+                                                                            ) => {
+                                                                                if (
+                                                                                    issue.length >
+                                                                                        0 &&
+                                                                                    issue.some(
+                                                                                        (
+                                                                                            item: Input
+                                                                                        ) =>
+                                                                                            record.key ===
+                                                                                            item.id
+                                                                                    )
+                                                                                )
+                                                                                    return "highlighted";
+                                                                            }}
+                                                                            pagination={
+                                                                                false
+                                                                            }
+                                                                            columns={
+                                                                                columns
+                                                                            }
+                                                                            dataSource={
+                                                                                dataSource
+                                                                            }
+                                                                        />
+                                                                    </Spin>
+                                                                </Col>
+                                                            </Row>
+                                                        </Col>
+                                                    </Space>
+                                                </TabPane>
+                                                {savedItems.length > 0 && (
+                                                    <TabPane
+                                                        key="1"
+                                                        tab={
+                                                            <div>
+                                                                <Tag>
+                                                                    {
+                                                                        savedItems.length
+                                                                    }
+                                                                </Tag>
+                                                                <Text className="tab-text">
+                                                                    Saved Items
+                                                                </Text>
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <Space
+                                                            direction="vertical"
+                                                            size={16}
+                                                            className="full-width"
+                                                        >
+                                                            <Col>
+                                                                {addItemRow()}
+                                                            </Col>
+                                                            <Col>
+                                                                <Row>
+                                                                    <Col
+                                                                        span={
+                                                                            24
+                                                                        }
+                                                                    >
+                                                                        <Spin
+                                                                            spinning={
+                                                                                false
+                                                                            }
+                                                                        >
+                                                                            <Table
+                                                                                rowClassName={(
+                                                                                    record
+                                                                                ) => {
+                                                                                    if (
+                                                                                        issue.length >
+                                                                                            0 &&
+                                                                                        issue.some(
+                                                                                            (
+                                                                                                item: Input
+                                                                                            ) =>
+                                                                                                record.key ===
+                                                                                                item.id
+                                                                                        )
+                                                                                    )
+                                                                                        return "highlighted";
+                                                                                }}
+                                                                                pagination={
+                                                                                    false
+                                                                                }
+                                                                                columns={
+                                                                                    columns
+                                                                                }
+                                                                                dataSource={
+                                                                                    savedItems
+                                                                                }
+                                                                            />
+                                                                        </Spin>
+                                                                    </Col>
+                                                                </Row>
+                                                            </Col>
+                                                        </Space>
+                                                    </TabPane>
+                                                )}
+                                                {openItems.length > 0 && (
+                                                    <TabPane
+                                                        key="2"
+                                                        tab={
+                                                            <div>
+                                                                <Tag>
+                                                                    {
+                                                                        openItems.length
+                                                                    }
+                                                                </Tag>
+                                                                <Text className="tab-text">
+                                                                    Open Items
+                                                                </Text>
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <Space
+                                                            direction="vertical"
+                                                            size={16}
+                                                            className="full-width"
+                                                        >
+                                                            <Col>
+                                                                {addItemRow()}
+                                                            </Col>
+                                                            <Col>
+                                                                <Row>
+                                                                    <Col
+                                                                        span={
+                                                                            24
+                                                                        }
+                                                                    >
+                                                                        <Spin
+                                                                            spinning={
+                                                                                false
+                                                                            }
+                                                                        >
+                                                                            <Table
+                                                                                rowClassName={(
+                                                                                    record
+                                                                                ) => {
+                                                                                    if (
+                                                                                        issue.length >
+                                                                                            0 &&
+                                                                                        issue.some(
+                                                                                            (
+                                                                                                item: Input
+                                                                                            ) =>
+                                                                                                record.key ===
+                                                                                                item.id
+                                                                                        )
+                                                                                    )
+                                                                                        return "highlighted";
+                                                                                }}
+                                                                                pagination={
+                                                                                    false
+                                                                                }
+                                                                                columns={
+                                                                                    columns
+                                                                                }
+                                                                                dataSource={
+                                                                                    openItems
+                                                                                }
+                                                                            />
+                                                                        </Spin>
+                                                                    </Col>
+                                                                </Row>
+                                                            </Col>
+                                                        </Space>
+                                                    </TabPane>
+                                                )}
+                                            </Tabs>
+                                        </Row>
+                                    </Col>
+                                    <Col>
+                                        <Row justify="end">
+                                            <Col>
+                                                <Button
+                                                    disabled={
+                                                        issue.length === 0
+                                                    }
+                                                    type="primary"
+                                                    onClick={createIssue}
+                                                >
+                                                    Create Issue(s)
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                </Space>
+                            </Content>
+                            <Sider
+                                trigger={null}
+                                className="sider"
+                                collapsible
+                                theme={"light"}
+                                collapsed={issueDrawerCollapsed}
+                                collapsedWidth={48}
+                                width="1073px"
+                            >
+                                <IssuesDrawer
+                                    {...{
+                                        collapsed: issueDrawerCollapsed,
+                                        setCollapsed: setIssueDrawerCollapsed,
+                                        activeTab,
+                                        createdIssues,
+                                    }}
+                                />
+                            </Sider>
+                        </Layout>
+                    </OpenItemsContext.Provider>
+                </SavedItemsContext.Provider>
             </StateContext.Provider>
         </>
     );

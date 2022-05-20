@@ -1,5 +1,5 @@
-label {
-    font-weight: 400px;
+.hidden {
+    display: hidden;
 }
 
 .ant-collapse-content-box {
@@ -15,8 +15,12 @@ label {
     width: 100%;
     margin-bottom: 16px;
 
-    &__panel-tag {
-        margin-left: 18px;
+    &__saved-tag {
+        color: #874d00;
+        border-color: #874d00;
+    }
+
+    &__open-tag {
         color: #135200;
         border-color: #135200;
     }
@@ -53,11 +57,21 @@ label {
     padding: 20px;
 }
 
+.ant-message-notice-content {
+    padding: 14px 18px;
+}
+.message-title {
+    font-size: 16px;
+}
+
 .message-text {
     padding-left: 25px;
     font-size: 12px;
+    font-weight: 300;
+    color: #595959;
 
-    &__sub-text {
+    &__subtext {
+        padding-top: 6px;
         padding-left: 24px;
     }
 }
@@ -126,12 +140,7 @@ label {
     &__credit-amount {
         padding-left: 24px;
     }
-
-    .return-item {
-        padding-left: 164px;
+    &__inconvenience-credit .ant-form-item-no-colon {
+        margin-right: 17px !important;
     }
-}
-
-.inconvenience-credit .ant-form-item-no-colon {
-    margin-right: 13px !important;
 }

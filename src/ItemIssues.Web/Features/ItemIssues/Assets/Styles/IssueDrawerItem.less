@@ -10,6 +10,10 @@
     text-align: left;
 }
 
+.ant-notification-notice-message {
+    text-transform: capitalize;
+}
+
 .drawer-item {
     display: block;
     width: 100%;
@@ -18,11 +22,19 @@
     &__saved-tag {
         color: #874d00;
         border-color: #874d00;
+        margin: 0 auto;
     }
 
     &__open-tag {
         color: #135200;
         border-color: #135200;
+        margin: 0 auto;
+    }
+
+    &__closed-tag {
+        color: #595959;
+        border-color: #595959;
+        margin: 0 auto;
     }
 
     &__item-table {
@@ -49,10 +61,6 @@
     }
 }
 
-.calc-btn {
-    color: #1890ff;
-}
-
 .action-btns {
     padding: 20px;
 }
@@ -60,20 +68,17 @@
 .ant-message-notice-content {
     padding: 14px 18px;
 }
-.message-title {
-    font-size: 16px;
+
+.ant-notification-notice-description {
+    color: #595959;
 }
 
-.message-text {
-    padding-left: 25px;
-    font-size: 12px;
-    font-weight: 300;
-    color: #595959;
+.calc-btn {
+    color: #1890ff;
+}
 
-    &__subtext {
-        padding-top: 6px;
-        padding-left: 24px;
-    }
+.price-input {
+    width: 216px;
 }
 
 // ShipmentInfo Component Styles

@@ -3,7 +3,12 @@ import IssueDrawerItem from "./IssueDrawerItem";
 import "../../Styles/IssuesDrawer.less";
 import HistoryItem from "./ResolutionSelect/HistoryItem";
 import { SavedItemsContext, OpenItemsContext } from "./ItemIssues";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import {
+    MenuUnfoldOutlined,
+    MenuFoldOutlined,
+    ExclamationCircleOutlined,
+    InfoCircleOutlined,
+} from "@ant-design/icons";
 import {
     Row,
     Col,
@@ -14,6 +19,10 @@ import {
     Button,
     Form,
     Alert,
+    Divider,
+    Tooltip,
+    Badge,
+    message,
 } from "antd";
 
 interface CreatedIssues {
@@ -44,21 +53,62 @@ const IssuesDrawer = ({
 }): JSX.Element => {
     const { savedItems } = useContext(SavedItemsContext);
     const { openItems } = useContext(OpenItemsContext);
+
+    const itemError = () => {
+        message.error({
+            className: "item-error",
+            content: (
+                <Row>
+                    <Space direction="vertical">
+                        <Col className="item-error__top">
+                            <Row>
+                                <Space>
+                                    <Col className="item-error__icon">
+                                        <ExclamationCircleOutlined />
+                                    </Col>
+                                    <Col>
+                                        <Text strong>
+                                            Item Issues Require Attention
+                                        </Text>
+                                    </Col>
+                                </Space>
+                            </Row>
+                        </Col>
+                        <Divider />
+                        <Col className="item-error__bottom">
+                            <Text className="item-error__tex-error">
+                                Item issues have not been saved, created or
+                                cancelled. Open drawer to complete actions.
+                            </Text>
+                        </Col>
+                    </Space>
+                </Row>
+            ),
+        });
+    };
+
     return (
         <>
             <Row className="drawer-container">
                 <Col className="left-tab">
                     <Row justify="center">
                         {collapsed ? (
-                            <MenuFoldOutlined
-                                className="left-tab__menu-btn"
-                                onClick={() => setCollapsed(false)}
-                            />
+                            <Badge count={2}>
+                                <MenuFoldOutlined
+                                    className="left-tab__menu-btn"
+                                    onClick={() => setCollapsed(false)}
+                                />
+                            </Badge>
                         ) : (
-                            <MenuUnfoldOutlined
-                                className="left-tab__menu-btn"
-                                onClick={() => setCollapsed(true)}
-                            />
+                            <Badge count={2}>
+                                <MenuUnfoldOutlined
+                                    className="left-tab__menu-btn"
+                                    onClick={() => {
+                                        itemError();
+                                        setCollapsed(true);
+                                    }}
+                                />
+                            </Badge>
                         )}
                     </Row>
                 </Col>
@@ -119,10 +169,18 @@ const IssuesDrawer = ({
                                                         },
                                                     ]}
                                                 >
-                                                    <TextArea
-                                                        placeholder="Add global comment"
-                                                        rows={1}
-                                                    />
+                                                    <div className="input-group">
+                                                        <TextArea
+                                                            placeholder="Add global comment"
+                                                            rows={1}
+                                                        />
+                                                        <Tooltip
+                                                            placement="topRight"
+                                                            title="Any comment applied here will show in all individual workboxes."
+                                                        >
+                                                            <InfoCircleOutlined className="info-icon" />
+                                                        </Tooltip>
+                                                    </div>
                                                 </Form.Item>
                                             </Col>
                                             <Col>
@@ -188,46 +246,51 @@ const IssuesDrawer = ({
                                 </Col>
                             </Row>
                         )}
-                        <Footer className="footer">
-                            <Row justify="space-between">
-                                <Col>
-                                    <Alert
-                                        className="hidden"
-                                        message="To create issues, fix errors or create issue individually"
-                                        type="error"
-                                        showIcon
-                                    />
-                                </Col>
-                                <Col>
-                                    <Row>
-                                        <Space size={16}>
-                                            <Col>
-                                                <Button
-                                                    type="primary"
-                                                    danger
-                                                    ghost
-                                                >
-                                                    Cancel Issue
-                                                </Button>
-                                            </Col>
-                                            <Col>
-                                                <Button type="primary" ghost>
-                                                    Save All for Later
-                                                </Button>
-                                            </Col>
-                                            <Col>
-                                                <Button
-                                                    className="create-btn"
-                                                    type="primary"
-                                                >
-                                                    Create Issue
-                                                </Button>
-                                            </Col>
-                                        </Space>
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Footer>
+                        {activeTab === "0" && (
+                            <Footer className="footer">
+                                <Row justify="space-between">
+                                    <Col>
+                                        <Alert
+                                            className="hidden"
+                                            message="To create issues, fix errors or create issue individually"
+                                            type="error"
+                                            showIcon
+                                        />
+                                    </Col>
+                                    <Col>
+                                        <Row>
+                                            <Space size={16}>
+                                                <Col>
+                                                    <Button
+                                                        type="primary"
+                                                        danger
+                                                        ghost
+                                                    >
+                                                        Cancel Issue
+                                                    </Button>
+                                                </Col>
+                                                <Col>
+                                                    <Button
+                                                        type="primary"
+                                                        ghost
+                                                    >
+                                                        Save All for Later
+                                                    </Button>
+                                                </Col>
+                                                <Col>
+                                                    <Button
+                                                        className="create-btn"
+                                                        type="primary"
+                                                    >
+                                                        Create Issue
+                                                    </Button>
+                                                </Col>
+                                            </Space>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </Footer>
+                        )}
                     </Col>
                 )}
             </Row>

@@ -1,7 +1,7 @@
 import "../../Styles/IssueDrawerItem.less";
 import "../../Styles/ItemIssues.less";
 import React, { useState, useContext } from "react";
-import { CalculatorFilled, CheckCircleOutlined } from "@ant-design/icons";
+import { CalculatorFilled } from "@ant-design/icons";
 import { dataSource } from "./Data/ItemData";
 import ResolutionOption from "./ResolutionSelect/ResolutionOption";
 import ShipmentInfo from "./ResolutionSelect/ShipmentInfo";
@@ -10,6 +10,7 @@ import {
     StateContext,
     SavedItemsContext,
     OpenItemsContext,
+    ClosedItemsContext,
 } from "./ItemIssues";
 import {
     Row,
@@ -23,7 +24,7 @@ import {
     Button,
     Form,
     Space,
-    message,
+    notification,
     Typography,
 } from "antd";
 
@@ -43,9 +44,11 @@ const IssueDrawerItem = ({
     const [convertedValue, setConvertedValue] = useState(
         createdIssues[index].price
     );
-    const [openPanel, setOpenPanel] = useState([index.toString()]);
+    const [openPanel, setOpenPanel] = useState<string[] | number[]>(["1"]);
+    const [isOpen, setIsOpen] = useState(true);
     const { savedItems, setSavedItems } = useContext(SavedItemsContext);
     const { openItems, setOpenItems } = useContext(OpenItemsContext);
+    const { closedItems, setClosedItems } = useContext(ClosedItemsContext);
 
     const convertCurrency = (value: string, amount: number) => {
         if (value === "$") setConvertedValue(amount);
@@ -53,46 +56,10 @@ const IssueDrawerItem = ({
             setConvertedValue(Math.ceil(amount * 0.95 * 100) / 100);
     };
 
-    const openMessage = () => {
-        message.success({
-            content: (
-                <>
-                    <Text className="message">
-                        Item Issue Successfully Opened
-                    </Text>{" "}
-                    <br />
-                    <Text className="message-text">
-                        Your item issues have been successfully <br />
-                        <span className="message-text__subtext">opened</span>
-                    </Text>
-                </>
-            ),
-            className: "success-message",
-            icon: <CheckCircleOutlined />,
-            style: {
-                textAlign: "right" as AlignType,
-                marginRight: 36,
-            },
-        });
-    };
-
-    const saveMessage = () => {
-        message.success({
-            content: (
-                <>
-                    <Text>Item Issue Successfully saved for Lates</Text> <br />
-                    <Text className="message-text">
-                        Your item issues have been successfully saved for <br />
-                        <span className="message-text__subtext">later.</span>
-                    </Text>
-                </>
-            ),
-            className: "success-message",
-            icon: <CheckCircleOutlined />,
-            style: {
-                textAlign: "right" as AlignType,
-                marginRight: 36,
-            },
+    const notify = (state: string) => {
+        notification.success({
+            message: `Item Issue Successfully ${state}`,
+            description: `Your item issues have been successfully ${state}`,
         });
     };
 
@@ -144,9 +111,9 @@ const IssueDrawerItem = ({
             title: "Price",
             dataIndex: "price",
             key: "price",
-            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
             render: () => (
                 <Input
+                    className="price-input"
                     addonBefore={selectBefore}
                     addonAfter={<CalculatorFilled className="calc-btn" />}
                     value={convertedValue}
@@ -155,38 +122,35 @@ const IssueDrawerItem = ({
         },
     ];
 
-    const addSavedItem = () => {
+    const addItemState = (
+        state: any,
+        stateString: string,
+        updateState: any
+    ) => {
         dataSource.forEach((item) => {
             if (item.key === createdIssues[index].key) {
-                item.status = "saved";
+                item.status = stateString;
             }
         });
-        createdIssues[index].status = "saved";
-        setSavedItems([...savedItems, createdIssues[index]]);
-        saveMessage();
-        setOpenPanel(null);
+        createdIssues[index].status = stateString;
+        updateState([...state, createdIssues[index]]);
+        notify(stateString);
+        setOpenPanel(isOpen ? null : ["1"]);
+        setIsOpen(false);
     };
 
-    const addOpenItem = () => {
-        dataSource.forEach((item) => {
-            if (item.key === createdIssues[index].key) {
-                item.status = "open";
-            }
-        });
-        createdIssues[index].status = "open";
-        setOpenItems([...openItems, createdIssues[index]]);
-        openMessage();
-        setOpenPanel(null);
+    const handlePanelChange = () => {
+        setOpenPanel(isOpen ? null : ["1"]);
+        setIsOpen(!isOpen);
     };
-
-    console.log(itemType);
 
     return (
         <>
             <Row className="drawer-item">
                 <Collapse
+                    onChange={handlePanelChange}
                     activeKey={openPanel}
-                    onChange={() => setOpenPanel(() => [index.toString()])}
+                    destroyInactivePanel={true}
                 >
                     <Panel
                         header={
@@ -214,7 +178,7 @@ const IssueDrawerItem = ({
                                 )}
                             </>
                         }
-                        key={index}
+                        key="1"
                     >
                         <Row className="drawer-item__item-table">
                             <Spin spinning={false}>
@@ -287,11 +251,27 @@ const IssueDrawerItem = ({
                         <Row className="action-btns">
                             <Space size={16}>
                                 <Col>
-                                    <Button>Cancel Issue</Button>
+                                    <Button
+                                        onClick={() =>
+                                            addItemState(
+                                                closedItems,
+                                                "closed",
+                                                setClosedItems
+                                            )
+                                        }
+                                    >
+                                        Cancel Issue
+                                    </Button>
                                 </Col>
                                 <Col>
                                     <Button
-                                        onClick={addSavedItem}
+                                        onClick={() =>
+                                            addItemState(
+                                                savedItems,
+                                                "saved",
+                                                setSavedItems
+                                            )
+                                        }
                                         type="primary"
                                         ghost
                                     >
@@ -300,7 +280,13 @@ const IssueDrawerItem = ({
                                 </Col>
                                 <Col>
                                     <Button
-                                        onClick={addOpenItem}
+                                        onClick={() =>
+                                            addItemState(
+                                                openItems,
+                                                "open",
+                                                setOpenItems
+                                            )
+                                        }
                                         type="primary"
                                     >
                                         Create Issue

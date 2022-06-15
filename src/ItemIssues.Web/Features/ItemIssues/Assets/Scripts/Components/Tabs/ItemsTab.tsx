@@ -1,21 +1,12 @@
 import React from "react";
 import "../../../Styles/ItemIssues.less";
+import { Record } from "../../Interface";
 import { Table, Row, Col, Spin, Space, Button, Form, Input } from "antd";
 
 interface Input {
     id: string;
     key: string;
     value: string;
-}
-
-interface Record {
-    image: string;
-    itemNumber: string;
-    key: string;
-    name: string;
-    price: number;
-    warehouse: number;
-    status: string;
 }
 
 const ItemsTab = ({

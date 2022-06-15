@@ -1,8 +1,18 @@
 ﻿@import (reference) "~Theme";
+body {
+    margin-top: -16px;
+    height: 100%;
+}
+
+.root {
+    display: none;
+}
 
 .container-fluid--main {
     padding: 0;
+    height: 100%;
 }
+
 .ant-table-thead > tr > th {
     font-weight: 600;
 }
@@ -63,9 +73,30 @@
     display: block;
 }
 
+.content-container {
+    height: 100%;
+}
+
+.content {
+    height: fit-content;
+    min-height: 100%;
+}
+
+.page-wrapper {
+    height: fit-content;
+    min-height: 100%;
+}
+
 #root {
+    height: 100%;
     position: relative;
-    padding: 20px 64px 0 16px;
+    padding-top: 20px;
+    padding-right: 64px;
+    padding-left: 16px;
+
+    div & {
+        height: 100%;
+    }
 }
 
 .overlay {
@@ -74,6 +105,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    min-height: 100vh;
     background-color: #00000073;
     opacity: 0.5;
     z-index: 10;
@@ -81,9 +113,9 @@
 
 .sider {
     position: absolute;
-    min-height: 100%;
-    right: 0;
     height: fit-content;
+    min-height: 100vh;
+    right: 0;
     -webkit-box-shadow: 1px 1px 15px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 1px 1px 15px 0px rgba(0, 0, 0, 0.1);
     z-index: 11;
@@ -104,7 +136,7 @@
     }
 
     &__home {
-        margin-left: 0;
+        margin-left: 0 !important;
     }
 }
 
@@ -114,6 +146,7 @@
 
 .layout {
     background: #fff;
+    height: 100%;
 }
 
 .highlighted {
@@ -142,6 +175,7 @@
     }
     &__description {
         max-width: 245px;
+        margin-left: 20px;
     }
 }
 
@@ -152,6 +186,11 @@
 .item-type {
     width: 176px;
 }
+
 .item-issue {
     width: 176px;
+}
+
+.pointer {
+    cursor: pointer;
 }

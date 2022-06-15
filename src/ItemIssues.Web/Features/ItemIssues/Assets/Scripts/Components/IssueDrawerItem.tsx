@@ -6,11 +6,12 @@ import { dataSource } from "./Data/ItemData";
 import ResolutionOption from "./ResolutionSelect/ResolutionOption";
 import ShipmentInfo from "./ResolutionSelect/ShipmentInfo";
 import { AlignType } from "rc-table/lib/interface";
+import { CreatedIssues } from "../Interface";
 import {
     StateContext,
     SavedItemsContext,
     OpenItemsContext,
-    ClosedItemsContext,
+    CanceledItemsContext,
 } from "./ItemIssues";
 import {
     Row,
@@ -28,6 +29,20 @@ import {
     Typography,
 } from "antd";
 
+interface TrackedIssues {
+    image: string;
+    issueSubCategory: string;
+    issueType: string;
+    itemNumber: string;
+    key: string;
+    name: string;
+    price: number;
+    quantity: number;
+    resolution: string;
+    status: string;
+    warehouse: number;
+}
+
 const { Panel } = Collapse;
 const { Option } = Select;
 const { Text } = Typography;
@@ -37,18 +52,22 @@ const IssueDrawerItem = ({
     itemType,
 }: {
     index: number;
-    itemType: any;
+    itemType: CreatedIssues[];
 }): JSX.Element => {
     const createdIssues = useContext(StateContext);
+    const { savedItems, setSavedItems } = useContext(SavedItemsContext);
+    const { openItems, setOpenItems } = useContext(OpenItemsContext);
+    const { canceledItems, setCanceledItems } =
+        useContext(CanceledItemsContext);
     const [resolution, setResolution] = useState<string>("");
     const [convertedValue, setConvertedValue] = useState(
         createdIssues[index].price
     );
     const [openPanel, setOpenPanel] = useState<string[] | number[]>(["1"]);
     const [isOpen, setIsOpen] = useState(true);
-    const { savedItems, setSavedItems } = useContext(SavedItemsContext);
-    const { openItems, setOpenItems } = useContext(OpenItemsContext);
-    const { closedItems, setClosedItems } = useContext(ClosedItemsContext);
+    const itemSource = dataSource.find(
+        (item) => item.key === createdIssues[index].key
+    );
 
     const convertCurrency = (value: string, amount: number) => {
         if (value === "$") setConvertedValue(amount);
@@ -88,7 +107,7 @@ const IssueDrawerItem = ({
                             <img src={itemType[index].image} alt="item" />
                         </Tag>
                     </div>
-                    <div className="tem-details__description">
+                    <div className="item-details__description">
                         <a href="/">{itemType[index].name}</a>
                         <p>{itemType[index].itemNumber}</p>
                     </div>
@@ -123,13 +142,14 @@ const IssueDrawerItem = ({
     ];
 
     const addItemState = (
-        state: any,
+        state: TrackedIssues[],
         stateString: string,
-        updateState: any
+        updateState: React.Dispatch<React.SetStateAction<CreatedIssues[]>>
     ) => {
         dataSource.forEach((item) => {
             if (item.key === createdIssues[index].key) {
                 item.status = stateString;
+                item.resolution = resolution;
             }
         });
         createdIssues[index].status = stateString;
@@ -160,7 +180,7 @@ const IssueDrawerItem = ({
                                         " > " +
                                         itemType[index].issueSubCategory}
                                 </Text>
-                                {itemType.status === "saved" && (
+                                {itemType[index].status === "saved" && (
                                     <Tag
                                         className="drawer-item__saved-tag"
                                         color="gold"
@@ -168,12 +188,17 @@ const IssueDrawerItem = ({
                                         Saved
                                     </Tag>
                                 )}
-                                {itemType.status === "open" && (
+                                {itemType[index].status === "open" && (
                                     <Tag
                                         className="drawer-item__open-tag"
                                         color="green"
                                     >
                                         Open
+                                    </Tag>
+                                )}
+                                {itemType[index].status === "canceled" && (
+                                    <Tag className="drawer-item__canceled-tag">
+                                        Canceled
                                     </Tag>
                                 )}
                             </>
@@ -189,110 +214,138 @@ const IssueDrawerItem = ({
                                 />
                             </Spin>
                         </Row>
-                        <Row className="drawer-item__resolution">
+                        <Row>
                             <Col>
-                                <Row>
-                                    <Form
-                                        name="basic"
-                                        labelCol={{ span: 12 }}
-                                        wrapperCol={{ span: 16 }}
-                                        initialValues={{ remember: true }}
-                                        autoComplete="off"
-                                    >
-                                        <Form.Item
-                                            label="Resolution"
-                                            className="drawer-item__resolution-input"
-                                            wrapperCol={{
-                                                span: 30,
-                                            }}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message:
-                                                        "Must select resolution to create issue",
-                                                },
-                                            ]}
-                                        >
-                                            <Select
-                                                placeholder="Select Resolution"
-                                                className="drawer-item__resolution-select"
-                                                onSelect={(value: string) => {
-                                                    setResolution(value);
-                                                }}
+                                <Form
+                                    name="resolution-form"
+                                    labelCol={{ span: 12 }}
+                                    wrapperCol={{ span: 16 }}
+                                    initialValues={{ remember: true }}
+                                    autoComplete="off"
+                                >
+                                    <Row className="drawer-item__resolution">
+                                        <Space direction="vertical" size={-2}>
+                                            <Form.Item
+                                                name="resolution"
+                                                label="Resolution"
+                                                className="drawer-item__resolution-input"
+                                                labelCol={{ span: 13 }}
+                                                wrapperCol={{ span: 16 }}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        message:
+                                                            "Must select resolution to create issue",
+                                                    },
+                                                ]}
                                             >
-                                                <Option value="payment credit">
-                                                    Payment Credit
-                                                </Option>
-                                                <Option value="store credit">
-                                                    Store Credit
-                                                </Option>
-                                                <Option value="0 order">
-                                                    $0 Order
-                                                </Option>
-                                            </Select>
-                                        </Form.Item>
-                                    </Form>
-                                </Row>
-                                <Row>
-                                    {resolution.length > 1 && (
-                                        <ResolutionOption
-                                            resolution={resolution}
-                                            index={index}
-                                        />
-                                    )}
-                                </Row>
+                                                <Select
+                                                    placeholder="Select Resolution"
+                                                    className="drawer-item__resolution-select"
+                                                    disabled={
+                                                        itemSource.status ===
+                                                        "canceled"
+                                                    }
+                                                    defaultValue={
+                                                        itemSource.resolution
+                                                            .length > 1
+                                                            ? itemSource.resolution
+                                                            : null
+                                                    }
+                                                    onSelect={(
+                                                        value: string
+                                                    ) => {
+                                                        setResolution(value);
+                                                        dataSource.map(
+                                                            (item) => {
+                                                                if (
+                                                                    item.key ===
+                                                                    createdIssues[
+                                                                        index
+                                                                    ].key
+                                                                )
+                                                                    return (item.resolution =
+                                                                        value);
+                                                            }
+                                                        );
+                                                    }}
+                                                >
+                                                    <Option value="payment credit">
+                                                        Payment Credit
+                                                    </Option>
+                                                    <Option value="store credit">
+                                                        Store Credit
+                                                    </Option>
+                                                    <Option value="0 order">
+                                                        $0 Order
+                                                    </Option>
+                                                </Select>
+                                            </Form.Item>
+                                            {itemSource.resolution.length >
+                                                1 && (
+                                                <ResolutionOption
+                                                    itemSource={itemSource}
+                                                    index={index}
+                                                />
+                                            )}
+                                        </Space>
+                                    </Row>
+                                    <Row className="action-btns">
+                                        <Space size={16}>
+                                            <Form.Item>
+                                                <Button
+                                                    onClick={() =>
+                                                        addItemState(
+                                                            canceledItems,
+                                                            "canceled",
+                                                            setCanceledItems
+                                                        )
+                                                    }
+                                                    htmlType="submit"
+                                                >
+                                                    Cancel Issue
+                                                </Button>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Button
+                                                    onClick={() =>
+                                                        addItemState(
+                                                            savedItems,
+                                                            "saved",
+                                                            setSavedItems
+                                                        )
+                                                    }
+                                                    type="primary"
+                                                    htmlType="submit"
+                                                    ghost
+                                                >
+                                                    Save for Later
+                                                </Button>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Button
+                                                    onClick={() =>
+                                                        addItemState(
+                                                            openItems,
+                                                            "open",
+                                                            setOpenItems
+                                                        )
+                                                    }
+                                                    type="primary"
+                                                    htmlType="submit"
+                                                >
+                                                    Create Issue
+                                                </Button>
+                                            </Form.Item>
+                                        </Space>
+                                    </Row>
+                                </Form>
                             </Col>
                             <Col>
-                                {resolution === "store credit" && (
+                                {itemSource.resolution === "store credit" && (
                                     <ShipmentInfo />
                                 )}
                             </Col>
-                        </Row>
-                        <Row className="action-btns">
-                            <Space size={16}>
-                                <Col>
-                                    <Button
-                                        onClick={() =>
-                                            addItemState(
-                                                closedItems,
-                                                "closed",
-                                                setClosedItems
-                                            )
-                                        }
-                                    >
-                                        Cancel Issue
-                                    </Button>
-                                </Col>
-                                <Col>
-                                    <Button
-                                        onClick={() =>
-                                            addItemState(
-                                                savedItems,
-                                                "saved",
-                                                setSavedItems
-                                            )
-                                        }
-                                        type="primary"
-                                        ghost
-                                    >
-                                        Save for Later
-                                    </Button>
-                                </Col>
-                                <Col>
-                                    <Button
-                                        onClick={() =>
-                                            addItemState(
-                                                openItems,
-                                                "open",
-                                                setOpenItems
-                                            )
-                                        }
-                                        type="primary"
-                                    >
-                                        Create Issue
-                                    </Button>
-                                </Col>
-                            </Space>
                         </Row>
                     </Panel>
                 </Collapse>

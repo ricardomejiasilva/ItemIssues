@@ -8,13 +8,15 @@ interface Input {
     value: string;
 }
 const OpenTab = ({
-    issue,
     openItems,
     columns,
+    setCollapsed,
 }: {
     issue: any;
     openItems: any;
     columns: any;
+    collapsed: boolean;
+    setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element => {
     return (
         <Space direction="vertical" size={16} className="full-width">
@@ -56,15 +58,11 @@ const OpenTab = ({
                     <Col span={24}>
                         <Spin spinning={false}>
                             <Table
-                                rowClassName={(record) => {
-                                    if (
-                                        issue.length > 0 &&
-                                        issue.some(
-                                            (item: Input) =>
-                                                record.key === item.id
-                                        )
-                                    )
-                                        return "highlighted";
+                                rowClassName="pointer"
+                                onRow={() => {
+                                    return {
+                                        onClick: () => setCollapsed(false),
+                                    };
                                 }}
                                 pagination={false}
                                 columns={columns}

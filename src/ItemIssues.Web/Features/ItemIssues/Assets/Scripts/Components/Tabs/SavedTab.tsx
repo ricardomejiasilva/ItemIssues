@@ -9,13 +9,15 @@ interface Input {
 }
 
 const SavedTab = ({
-    issue,
     savedItems,
     columns,
+    setCollapsed,
 }: {
     issue: any;
     savedItems: any;
     columns: any;
+    collapsed: boolean;
+    setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element => {
     return (
         <Space direction="vertical" size={16} className="full-width">
@@ -57,15 +59,11 @@ const SavedTab = ({
                     <Col span={24}>
                         <Spin spinning={false}>
                             <Table
-                                rowClassName={(record) => {
-                                    if (
-                                        issue.length > 0 &&
-                                        issue.some(
-                                            (item: Input) =>
-                                                record.key === item.id
-                                        )
-                                    )
-                                        return "highlighted";
+                                rowClassName="pointer"
+                                onRow={() => {
+                                    return {
+                                        onClick: () => setCollapsed(false),
+                                    };
                                 }}
                                 pagination={false}
                                 columns={columns}

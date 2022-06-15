@@ -48,13 +48,13 @@
             <div class="warning-banner warning-banner--dev">
                 <p class="warning-banner__text"><strong>Warning</strong> - You are currently on a DEVELOPMENT version of the <strong>Item Issues Sandbox</strong>.</p>
             </div>
-            <div>
+            <div class="content-container">
                 @foreach (var style in Model.Styles)
                 {
                     <link rel="stylesheet" href="@style" />
                 }
 
-                <div id="root"></div>
+                <div id="root1" class="root" ></div>
 
                 <script src="~/src/wap_js/jquery.js"></script>
                 <script src="~/src/wap_js/moment.js"></script>

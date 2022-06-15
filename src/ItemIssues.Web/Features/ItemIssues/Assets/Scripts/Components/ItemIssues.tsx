@@ -9,6 +9,8 @@ import { issueSelection } from "./Data/IssueSelection";
 import { AlignType } from "rc-table/lib/interface";
 import OpenTab from "./Tabs/OpenTab";
 import SavedTab from "./Tabs/SavedTab";
+import ItemsTab from "./Tabs/ItemsTab";
+import { Record, CreatedIssues } from "../Interface";
 import {
     Tabs,
     Layout,
@@ -23,7 +25,6 @@ import {
     Popover,
     Space,
 } from "antd";
-import ItemsTab from "./Tabs/ItemsTab";
 
 interface Input {
     id: string;
@@ -31,27 +32,6 @@ interface Input {
     value: string;
 }
 
-interface Record {
-    image: string;
-    itemNumber: string;
-    key: string;
-    name: string;
-    price: number;
-    warehouse: number;
-    status: string;
-}
-
-interface CreatedIssues {
-    image: string;
-    issueSubCategory: string;
-    issueType: string;
-    itemNumber: string;
-    key: string;
-    name: string;
-    price: number;
-    quantity: number;
-    status: string;
-}
 interface Value {
     label: string;
     value: string;
@@ -62,7 +42,7 @@ interface Value {
 export const StateContext = createContext<CreatedIssues[]>([]);
 export const SavedItemsContext = createContext<any>([]);
 export const OpenItemsContext = createContext<any>([]);
-export const ClosedItemsContext = createContext<any>([]);
+export const CanceledItemsContext = createContext<any>([]);
 
 const ItemIssues = (): JSX.Element => {
     const { Title, Text } = Typography;
@@ -78,9 +58,9 @@ const ItemIssues = (): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>("0");
 
     const [createdIssues, setCreatedIssues] = useState<CreatedIssues[]>([]);
-    const [savedItems, setSavedItems] = useState<any>([]);
-    const [openItems, setOpenItems] = useState<any>([]);
-    const [closedItems, setClosedItems] = useState<any>([]);
+    const [savedItems, setSavedItems] = useState<CreatedIssues[]>([]);
+    const [openItems, setOpenItems] = useState<CreatedIssues[]>([]);
+    const [canceledItems, setCanceledItems] = useState<CreatedIssues[]>([]);
 
     const updateInput = (
         value: Value,
@@ -152,16 +132,6 @@ const ItemIssues = (): JSX.Element => {
         setActiveTab(() => activeKey);
     };
 
-    const colorSelector = (status: string) => {
-        if (status === "open") {
-            return "green";
-        } else if (status === "saved") {
-            return "gold";
-        } else {
-            return "default";
-        }
-    };
-
     const columns = [
         {
             title: "Item",
@@ -174,30 +144,12 @@ const ItemIssues = (): JSX.Element => {
                             <img src={record.image} alt="item" />
                         </Tag>
                     </div>
-                    <div className="tem-details__description">
+                    <div className="item-details__description">
                         <a href="/">{record.name}</a>
                         <p>Item # {record.itemNumber}</p>
                     </div>
                 </div>
             ),
-        },
-        {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            align: "center" as AlignType,
-            render: (_: null, record: Record) => {
-                return (
-                    record.status && (
-                        <Tag
-                            className={`drawer-item__${record.status}-tag`}
-                            color={colorSelector(record.status)}
-                        >
-                            {record.status}
-                        </Tag>
-                    )
-                );
-            },
         },
         {
             title: "Shipped From",
@@ -273,7 +225,7 @@ const ItemIssues = (): JSX.Element => {
                         Warehouse Error
                     </Option>
                     <Option key="web error" value="Web Error">
-                        Web error
+                        Web Error
                     </Option>
                 </Select>
             ),
@@ -382,8 +334,8 @@ const ItemIssues = (): JSX.Element => {
                     <OpenItemsContext.Provider
                         value={{ openItems, setOpenItems }}
                     >
-                        <ClosedItemsContext.Provider
-                            value={{ closedItems, setClosedItems }}
+                        <CanceledItemsContext.Provider
+                            value={{ canceledItems, setCanceledItems }}
                         >
                             <Layout className="layout">
                                 <Content className="content">
@@ -467,6 +419,12 @@ const ItemIssues = (): JSX.Element => {
                                                                 columns={
                                                                     columns
                                                                 }
+                                                                collapsed={
+                                                                    issueDrawerCollapsed
+                                                                }
+                                                                setCollapsed={
+                                                                    setIssueDrawerCollapsed
+                                                                }
                                                             />
                                                         </TabPane>
                                                     )}
@@ -495,6 +453,12 @@ const ItemIssues = (): JSX.Element => {
                                                                 columns={
                                                                     columns
                                                                 }
+                                                                collapsed={
+                                                                    issueDrawerCollapsed
+                                                                }
+                                                                setCollapsed={
+                                                                    setIssueDrawerCollapsed
+                                                                }
                                                             />
                                                         </TabPane>
                                                     )}
@@ -518,10 +482,13 @@ const ItemIssues = (): JSX.Element => {
                                         </Col>
                                     </Space>
                                 </Content>
-                                <div className="sider-container">
+                                <div>
                                     <div
                                         className={
                                             !issueDrawerCollapsed && "overlay"
+                                        }
+                                        onClick={() =>
+                                            setIssueDrawerCollapsed(true)
                                         }
                                     />
                                     <Sider
@@ -545,7 +512,7 @@ const ItemIssues = (): JSX.Element => {
                                     </Sider>
                                 </div>
                             </Layout>
-                        </ClosedItemsContext.Provider>
+                        </CanceledItemsContext.Provider>
                     </OpenItemsContext.Provider>
                 </SavedItemsContext.Provider>
             </StateContext.Provider>

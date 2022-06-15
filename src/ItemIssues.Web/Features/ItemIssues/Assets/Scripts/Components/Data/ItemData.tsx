@@ -7,6 +7,7 @@ export const dataSource = [
         itemNumber: "251ESPBNVBCX",
         image: "https://i.postimg.cc/Qt5fsrS6/Rectangle-277.png",
         status: "",
+        resolution: "",
     },
     {
         key: "2",
@@ -16,6 +17,7 @@ export const dataSource = [
         itemNumber: "646ESPBNMKUH",
         image: "https://i.postimg.cc/9Fs8PP2s/Rectangle-277.png",
         status: "",
+        resolution: "",
     },
     {
         key: "3",
@@ -25,6 +27,7 @@ export const dataSource = [
         itemNumber: "952ESPDFGILK",
         image: "https://i.postimg.cc/NM0kvLY1/Rectangle-277.png",
         status: "",
+        resolution: "",
     },
     {
         key: "4",
@@ -34,5 +37,6 @@ export const dataSource = [
         itemNumber: "645ESPDFGILK",
         image: "https://i.postimg.cc/qMKxwYp0/Rectangle-277.png",
         status: "",
+        resolution: "",
     },
 ];

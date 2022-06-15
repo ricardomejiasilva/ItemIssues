@@ -19,6 +19,11 @@
     width: 100%;
     margin-bottom: 16px;
 
+    .ant-tag {
+        margin-left: 12px;
+        margin-right: 0;
+    }
+
     &__saved-tag {
         color: #874d00;
         border-color: #874d00;
@@ -34,6 +39,12 @@
     &__closed-tag {
         color: #595959;
         border-color: #595959;
+        margin: 0 auto;
+    }
+    &__canceled-tag {
+        color: #820014;
+        border-color: #820014;
+        background-color: #fff1f0;
         margin: 0 auto;
     }
 
@@ -52,12 +63,12 @@
         .ant-form-item-label {
             text-align: left;
             padding-left: 16px;
-            margin-right: 5px;
+            max-width: 169px;
         }
     }
 
     &__resolution-select {
-        width: 239px !important;
+        width: 233px !important;
     }
 }
 
@@ -88,6 +99,7 @@
     background: #fafafa;
     margin-top: 20px;
     margin-left: 16px;
+    margin-bottom: 16px;
     padding: 16px;
     border: 1px solid #d9d9d9;
 
@@ -142,8 +154,12 @@
         margin-bottom: 16px;
     }
 
+    &__payment-amount {
+        padding-left: 28px;
+    }
+
     &__credit-amount {
-        padding-left: 24px;
+        padding-left: 52px;
     }
     &__inconvenience-credit .ant-form-item-no-colon {
         margin-right: 17px !important;

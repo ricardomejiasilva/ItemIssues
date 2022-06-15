@@ -3,6 +3,7 @@ import IssueDrawerItem from "./IssueDrawerItem";
 import "../../Styles/IssuesDrawer.less";
 import HistoryItem from "./ResolutionSelect/HistoryItem";
 import { SavedItemsContext, OpenItemsContext } from "./ItemIssues";
+import { CreatedIssues } from "../Interface";
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
@@ -24,17 +25,6 @@ import {
     Badge,
     message,
 } from "antd";
-
-interface CreatedIssues {
-    key: string;
-    name: string;
-    price: number;
-    itemNumber: string;
-    image: string;
-    quantity: number;
-    issueType: string;
-    issueSubCategory: string;
-}
 
 const { Title, Text } = Typography;
 const { Footer } = Layout;
@@ -266,7 +256,7 @@ const IssuesDrawer = ({
                                                         danger
                                                         ghost
                                                     >
-                                                        Cancel Issue
+                                                        Cancel All Issue
                                                     </Button>
                                                 </Col>
                                                 <Col>
@@ -282,7 +272,7 @@ const IssuesDrawer = ({
                                                         className="create-btn"
                                                         type="primary"
                                                     >
-                                                        Create Issue
+                                                        Create All Issue
                                                     </Button>
                                                 </Col>
                                             </Space>

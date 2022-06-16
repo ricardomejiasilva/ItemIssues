@@ -508,12 +508,8 @@ const ItemIssues = (): JSX.Element => {
                                 </Content>
                                 <Row>
                                     <Col
-                                        className={
-                                            !issueDrawerCollapsed && "overlay"
-                                        }
-                                        onClick={() =>
-                                            setIssueDrawerCollapsed(true)
-                                        }
+                                        className={!issueDrawerCollapsed && "overlay"}
+                                        onClick={() => setIssueDrawerCollapsed(true)}
                                     />
                                     <Sider
                                         trigger={null}

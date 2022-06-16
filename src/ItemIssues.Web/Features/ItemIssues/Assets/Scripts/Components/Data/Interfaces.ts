@@ -23,7 +23,7 @@ export interface CreatedIssues {
     name: string;
     price: number;
     quantity?: number;
-    status: string;
+    status?: string;
     resolution?: string;
 }
 

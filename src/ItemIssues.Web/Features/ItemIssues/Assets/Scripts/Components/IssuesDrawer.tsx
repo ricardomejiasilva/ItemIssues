@@ -3,13 +3,8 @@ import IssueDrawerItem from "./IssueDrawerItem";
 import "../../Styles/IssuesDrawer.less";
 import HistoryItem from "./ResolutionSelect/HistoryItem";
 import { SavedItemsContext, OpenItemsContext } from "./ItemIssues";
-import { CreatedIssues } from "../Interface";
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    ExclamationCircleOutlined,
-    InfoCircleOutlined,
-} from "@ant-design/icons";
+import { CreatedIssues } from "./Data/Interfaces";
+import { MenuUnfoldOutlined, MenuFoldOutlined, ExclamationCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import {
     Row,
     Col,
@@ -57,9 +52,7 @@ const IssuesDrawer = ({
                                         <ExclamationCircleOutlined />
                                     </Col>
                                     <Col>
-                                        <Text strong>
-                                            Item Issues Require Attention
-                                        </Text>
+                                        <Text strong>Item Issues Require Attention</Text>
                                     </Col>
                                 </Space>
                             </Row>
@@ -67,8 +60,7 @@ const IssuesDrawer = ({
                         <Divider />
                         <Col className="item-error__bottom">
                             <Text className="item-error__tex-error">
-                                Item issues have not been saved, created or
-                                cancelled. Open drawer to complete actions.
+                                Item issues have not been saved, created or cancelled. Open drawer to complete actions.
                             </Text>
                         </Col>
                     </Space>
@@ -84,10 +76,7 @@ const IssuesDrawer = ({
                     <Row justify="center">
                         {collapsed ? (
                             <Badge count={2}>
-                                <MenuFoldOutlined
-                                    className="left-tab__menu-btn"
-                                    onClick={() => setCollapsed(false)}
-                                />
+                                <MenuFoldOutlined className="left-tab__menu-btn" onClick={() => setCollapsed(false)} />
                             </Badge>
                         ) : (
                             <Badge count={2}>
@@ -160,10 +149,7 @@ const IssuesDrawer = ({
                                                     ]}
                                                 >
                                                     <div className="input-group">
-                                                        <TextArea
-                                                            placeholder="Add global comment"
-                                                            rows={1}
-                                                        />
+                                                        <TextArea placeholder="Add global comment" rows={1} />
                                                         <Tooltip
                                                             placement="topRight"
                                                             title="Any comment applied here will show in all individual workboxes."
@@ -251,27 +237,17 @@ const IssuesDrawer = ({
                                         <Row>
                                             <Space size={16}>
                                                 <Col>
-                                                    <Button
-                                                        type="primary"
-                                                        danger
-                                                        ghost
-                                                    >
+                                                    <Button type="primary" danger ghost>
                                                         Cancel All Issue
                                                     </Button>
                                                 </Col>
                                                 <Col>
-                                                    <Button
-                                                        type="primary"
-                                                        ghost
-                                                    >
+                                                    <Button type="primary" ghost>
                                                         Save All for Later
                                                     </Button>
                                                 </Col>
                                                 <Col>
-                                                    <Button
-                                                        className="create-btn"
-                                                        type="primary"
-                                                    >
+                                                    <Button className="create-btn" type="primary">
                                                         Create All Issue
                                                     </Button>
                                                 </Col>

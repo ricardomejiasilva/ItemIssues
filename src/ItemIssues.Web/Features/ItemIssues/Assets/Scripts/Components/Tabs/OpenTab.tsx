@@ -24,18 +24,13 @@ const OpenTab = ({
                 <Row justify="space-between">
                     <Col>
                         <Row>
-                            <Space
-                                direction="horizontal"
-                                className="add-item"
-                                size={16}
-                            >
+                            <Space direction="horizontal" className="add-item" size={16}>
                                 <Col>
                                     <Form.Item
                                         rules={[
                                             {
                                                 required: true,
-                                                message:
-                                                    "Must enter item number to add item",
+                                                message: "Must enter item number to add item",
                                             },
                                         ]}
                                     >

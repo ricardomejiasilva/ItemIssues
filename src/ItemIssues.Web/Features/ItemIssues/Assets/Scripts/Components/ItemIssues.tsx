@@ -534,7 +534,7 @@ const ItemIssues = (): JSX.Element => {
                                             }}
                                         />
                                     </Sider>
-                                </R>
+                                </Row>
                             </Layout>
                         </CanceledItemsContext.Provider>
                     </OpenItemsContext.Provider>

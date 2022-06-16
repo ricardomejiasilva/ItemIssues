@@ -3,7 +3,7 @@ import "../../../Styles/PaymentCredit.less";
 import { Input, Form, Checkbox, Typography, Space, Alert, Popover } from "antd";
 import { InfoCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
 import { StateContext } from "../ItemIssues";
-import { CreatedIssues } from "../../Interface";
+import { CreatedIssues } from "../Data/Interfaces";
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -12,27 +12,7 @@ enum ResolutionType {
     paymentCredit = "payment credit",
 }
 
-interface TrackedIssues {
-    image: string;
-    issueSubCategory?: string;
-    issueType?: string;
-    itemNumber: string;
-    key: string;
-    name: string;
-    price: number;
-    quantity?: number;
-    resolution: string;
-    status: string;
-    warehouse: number;
-}
-
-const ResolutionOption = ({
-    itemSource,
-    index,
-}: {
-    itemSource: TrackedIssues;
-    index: number;
-}): JSX.Element => {
+const ResolutionOption = ({ itemSource, index }: { itemSource: CreatedIssues; index: number }): JSX.Element => {
     const createdIssues = useContext(StateContext);
     console.log(itemSource.status === "canceled" && true);
     return (

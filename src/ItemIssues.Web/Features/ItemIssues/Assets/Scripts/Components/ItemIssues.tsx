@@ -31,6 +31,11 @@ interface Input {
     key: string;
     value: string;
 }
+interface Quantity {
+    id: string;
+    key: number | string;
+    value: number | string;
+}
 
 interface Value {
     label: string;
@@ -130,6 +135,10 @@ const ItemIssues = (): JSX.Element => {
 
     const updateKey = (activeKey: string) => {
         setActiveTab(() => activeKey);
+    };
+
+    const splitBtn = () => {
+        return <Button>Split</Button>;
     };
 
     const columns = [
@@ -323,7 +332,23 @@ const ItemIssues = (): JSX.Element => {
             align: "center" as const,
             render: () => <Checkbox />,
         },
+        {
+            title: "",
+            dataIndex: "",
+            key: "split",
+            render: (_: null, record: Record) => (
+                <>
+                    {quantity.some(
+                        (item: Quantity) =>
+                            item.id == record.key && item.value > 1
+                    ) && <Button className="split-btn">Split</Button>}
+
+                </>
+            ),
+        },
     ];
+
+    console.log(quantity);
 
     return (
         <>

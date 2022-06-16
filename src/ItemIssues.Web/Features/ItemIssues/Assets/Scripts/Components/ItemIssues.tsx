@@ -342,7 +342,6 @@ const ItemIssues = (): JSX.Element => {
                         (item: Quantity) =>
                             item.id == record.key && item.value > 1
                     ) && <Button className="split-btn">Split</Button>}
-
                 </>
             ),
         },
@@ -507,8 +506,8 @@ const ItemIssues = (): JSX.Element => {
                                         </Col>
                                     </Space>
                                 </Content>
-                                <div>
-                                    <div
+                                <Row>
+                                    <Col
                                         className={
                                             !issueDrawerCollapsed && "overlay"
                                         }
@@ -535,7 +534,7 @@ const ItemIssues = (): JSX.Element => {
                                             }}
                                         />
                                     </Sider>
-                                </div>
+                                </R>
                             </Layout>
                         </CanceledItemsContext.Provider>
                     </OpenItemsContext.Provider>

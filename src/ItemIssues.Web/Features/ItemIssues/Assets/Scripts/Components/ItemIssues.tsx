@@ -10,6 +10,7 @@ import { AlignType } from "rc-table/lib/interface";
 import OpenTab from "./Tabs/OpenTab";
 import SavedTab from "./Tabs/SavedTab";
 import ItemsTab from "./Tabs/ItemsTab";
+import SplitItem from "./SplitItem";
 import { Record, CreatedIssues } from "../Interface";
 import {
     Tabs,
@@ -24,6 +25,7 @@ import {
     Select,
     Popover,
     Space,
+    Modal,
 } from "antd";
 
 interface Input {
@@ -61,6 +63,7 @@ const ItemIssues = (): JSX.Element => {
     const [issueDrawerCollapsed, setIssueDrawerCollapsed] =
         useState<boolean>(true);
     const [activeTab, setActiveTab] = useState<string>("0");
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const [createdIssues, setCreatedIssues] = useState<CreatedIssues[]>([]);
     const [savedItems, setSavedItems] = useState<CreatedIssues[]>([]);
@@ -135,10 +138,6 @@ const ItemIssues = (): JSX.Element => {
 
     const updateKey = (activeKey: string) => {
         setActiveTab(() => activeKey);
-    };
-
-    const splitBtn = () => {
-        return <Button>Split</Button>;
     };
 
     const columns = [
@@ -341,7 +340,20 @@ const ItemIssues = (): JSX.Element => {
                     {quantity.some(
                         (item: Quantity) =>
                             item.id == record.key && item.value > 1
-                    ) && <Button className="split-btn">Split</Button>}
+                    ) && (
+                        <Button
+                            onClick={() => setIsModalVisible(true)}
+                            className="split-btn"
+                        >
+                            Split
+                        </Button>
+                    )}
+                    <Button
+                        onClick={() => setIsModalVisible(true)}
+                        className="split-btn hidden"
+                    >
+                        Unsplit
+                    </Button>
                 </>
             ),
         },
@@ -508,8 +520,12 @@ const ItemIssues = (): JSX.Element => {
                                 </Content>
                                 <Row>
                                     <Col
-                                        className={!issueDrawerCollapsed && "overlay"}
-                                        onClick={() => setIssueDrawerCollapsed(true)}
+                                        className={
+                                            !issueDrawerCollapsed && "overlay"
+                                        }
+                                        onClick={() =>
+                                            setIssueDrawerCollapsed(true)
+                                        }
                                     />
                                     <Sider
                                         trigger={null}
@@ -531,6 +547,43 @@ const ItemIssues = (): JSX.Element => {
                                         />
                                     </Sider>
                                 </Row>
+                                <Modal
+                                    className="split-modal"
+                                    title="Split Modal"
+                                    visible={isModalVisible}
+                                    onOk={() => setIsModalVisible(false)}
+                                    onCancel={() => setIsModalVisible(false)}
+                                    footer={[
+                                        <Button
+                                            key="back"
+                                            onClick={() =>
+                                                setIsModalVisible(false)
+                                            }
+                                        >
+                                            Cancel
+                                        </Button>,
+                                        <Button
+                                            key="submit"
+                                            type="primary"
+                                            onClick={() =>
+                                                setIsModalVisible(false)
+                                            }
+                                        >
+                                            Submit Split
+                                        </Button>,
+                                    ]}
+                                >
+                                    <Row>
+                                        <Text>
+                                            Select Quantity and Issue Type for
+                                            each Split
+                                        </Text>
+                                    </Row>
+                                    <Row>
+                                        <SplitItem />
+                                        <SplitItem />
+                                    </Row>
+                                </Modal>
                             </Layout>
                         </CanceledItemsContext.Provider>
                     </OpenItemsContext.Provider>

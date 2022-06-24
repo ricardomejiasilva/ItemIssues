@@ -6,7 +6,6 @@ import { Col, Tag, Select, Space } from "antd";
 const SplitItem = () => {
     const { Option } = Select;
     const [splitType, setSplitType] = useState("");
-    console.log(splitType);
 
     return (
         <Space className="split-item-container">

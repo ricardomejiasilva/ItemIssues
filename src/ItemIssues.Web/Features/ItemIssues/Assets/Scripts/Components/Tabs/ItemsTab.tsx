@@ -1,13 +1,7 @@
 import React from "react";
 import "../../../Styles/ItemIssues.less";
-import { Record } from "../../Interface";
+import { Record, Inputs } from "../Data/Interfaces";
 import { Table, Row, Col, Spin, Space, Button, Form, Input } from "antd";
-
-interface Input {
-    id: string;
-    key: string;
-    value: string;
-}
 
 const ItemsTab = ({
     issue,
@@ -63,7 +57,7 @@ const ItemsTab = ({
                                     if (
                                         issue.length > 0 &&
                                         issue.some(
-                                            (item: Input) =>
+                                            (item: Inputs) =>
                                                 record.key === item.id
                                         )
                                     )

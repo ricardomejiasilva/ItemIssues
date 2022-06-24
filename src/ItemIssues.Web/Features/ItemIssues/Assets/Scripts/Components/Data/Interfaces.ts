@@ -6,12 +6,12 @@ export interface Record {
     price: number;
     warehouse: number;
     status: string;
-    productLink: string;
-    productDescription: string;
-    quantityOrdered: number;
-    isExtraItem: boolean;
-    isDropShip: boolean;
-    isSpecialOrder: boolean;
+    productLink?: string;
+    productDescription?: string;
+    quantityOrdered?: number;
+    isExtraItem?: boolean;
+    isDropShip?: boolean;
+    isSpecialOrder?: boolean;
 }
 
 export interface CreatedIssues {
@@ -32,6 +32,12 @@ export interface Value {
     value: string;
     key: string;
     disabled: boolean;
+}
+
+export interface Inputs {
+    id: string;
+    key: string;
+    value: string;
 }
 
 export interface ItemIssuesOrderData {
@@ -79,4 +85,25 @@ export interface ItemToAdd {
     productLink: string;
     price: number;
     isValid: boolean;
+}
+
+export interface OrderItemRecord {
+    image: string;
+    itemNumber: string;
+    key: string;
+    name: string;
+    price: number;
+    warehouse: number;
+    status: string;
+    productLink: string;
+    productDescription: string;
+    quantityOrdered: number;
+    quantitySelected: number;
+    isExtraItem: boolean;
+    isDropShip: boolean;
+    isSpecialOrder: boolean;
+    splitParentKey?: string;
+    quantityRemaining?: number;
+    selectedType: string;
+    selectedIssue: string;
 }

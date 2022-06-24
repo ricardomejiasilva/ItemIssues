@@ -101,17 +101,21 @@ const IssueDrawerItem = ({
             dataIndex: "name",
             key: "name",
             render: () => (
-                <div className="item-details">
-                    <div>
-                        <Tag className="item-details__tag">
-                            <img src={itemType[index].image} alt="item" />
-                        </Tag>
-                    </div>
-                    <div className="item-details__description">
-                        <a href="/">{itemType[index].name}</a>
-                        <p>{itemType[index].itemNumber}</p>
-                    </div>
-                </div>
+                <Row className="item-details">
+                    <Space size={16}>
+                        <Col>
+                            <Tag className="item-details__tag">
+                                <img src={itemType[index].image} alt="item" />
+                            </Tag>
+                        </Col>
+                        <Col className="item-details__description">
+                            <Space direction="vertical" size={0}>
+                                <a href="/">{itemType[index].name}</a>
+                                <Text>Item # {itemType[index].itemNumber}</Text>
+                            </Space>
+                        </Col>
+                    </Space>
+                </Row>
             ),
         },
         {

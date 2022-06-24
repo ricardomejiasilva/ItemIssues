@@ -27,6 +27,7 @@ import {
     Space,
     Modal,
 } from "antd";
+import BulkModal from "./BulkModal";
 
 interface Input {
     id: string;
@@ -146,17 +147,21 @@ const ItemIssues = (): JSX.Element => {
             dataIndex: "name",
             key: "name",
             render: (_: null, record: Record) => (
-                <div className="item-details">
-                    <div>
-                        <Tag className="item-details__tag">
-                            <img src={record.image} alt="item" />
-                        </Tag>
-                    </div>
-                    <div className="item-details__description">
-                        <a href="/">{record.name}</a>
-                        <p>Item # {record.itemNumber}</p>
-                    </div>
-                </div>
+                <Row className="item-details">
+                    <Space size={10}>
+                        <Col>
+                            <Tag className="item-details__tag">
+                                <img src={record.image} alt="item" />
+                            </Tag>
+                        </Col>
+                        <Col className="item-details__description">
+                            <Space direction="vertical" size={0}>
+                                <a href="/">{record.name}</a>
+                                <Text>Item # {record.itemNumber}</Text>
+                            </Space>
+                        </Col>
+                    </Space>
+                </Row>
             ),
         },
         {
@@ -359,8 +364,6 @@ const ItemIssues = (): JSX.Element => {
         },
     ];
 
-    console.log(quantity);
-
     return (
         <>
             <StateContext.Provider value={createdIssues}>
@@ -376,7 +379,7 @@ const ItemIssues = (): JSX.Element => {
                             <Layout className="layout">
                                 <Content className="content">
                                     <Row>
-                                        <div className="relative-path">
+                                        <Col className="relative-path">
                                             <a
                                                 className="relative-path__home"
                                                 href="/"
@@ -386,7 +389,7 @@ const ItemIssues = (): JSX.Element => {
                                             <p>/</p>
                                             <a href="/">Content</a>
                                             <p>/</p>
-                                        </div>
+                                        </Col>
                                     </Row>
                                     <Row>
                                         <Title level={3}>
@@ -584,6 +587,7 @@ const ItemIssues = (): JSX.Element => {
                                         <SplitItem />
                                     </Row>
                                 </Modal>
+                                <BulkModal />
                             </Layout>
                         </CanceledItemsContext.Provider>
                     </OpenItemsContext.Provider>

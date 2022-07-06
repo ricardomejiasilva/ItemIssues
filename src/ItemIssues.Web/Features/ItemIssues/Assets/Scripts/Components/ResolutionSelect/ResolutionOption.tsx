@@ -14,7 +14,6 @@ enum ResolutionType {
 
 const ResolutionOption = ({ itemSource, index }: { itemSource: CreatedIssues; index: number }): JSX.Element => {
     const createdIssues = useContext(StateContext);
-    console.log(itemSource.status === "canceled" && true);
     return (
         <>
             <Form colon={false} className="resolutions">

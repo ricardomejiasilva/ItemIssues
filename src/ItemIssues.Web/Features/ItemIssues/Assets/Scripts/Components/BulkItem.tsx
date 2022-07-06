@@ -1,32 +1,92 @@
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../Styles/ItemIssues.less";
-import type { CheckboxChangeEvent } from "antd/es/checkbox";
-import { Row, Col, Space, Select, Checkbox, Typography, Tag } from "antd";
-import { Record } from "./Data/Interfaces";
+import {
+    Row,
+    Col,
+    Space,
+    Select,
+    Checkbox,
+    Typography,
+    Tag,
+    Popconfirm,
+} from "antd";
+import { Inputs, Record } from "./Data/Interfaces";
 
 const BulkItem = ({
     bulkItem,
     selected,
+    index,
     type,
     issue,
+    bulkType,
+    bulkIssue,
+    isModalVisible,
 }: {
     bulkItem: Record;
     selected: boolean;
-    type: string;
-    issue: string;
+    index: number;
+    type: Inputs[];
+    issue: Inputs[];
+    bulkType: string;
+    bulkIssue: string;
+    isModalVisible: boolean;
 }) => {
     const { Text } = Typography;
     const { Option } = Select;
     const [checked, setCheked] = useState<boolean>(false);
-    const onChange = (e: CheckboxChangeEvent) => {
-        setCheked(e.target.checked);
-    };
+    const [popDisabled, setPopDisabled] = useState<boolean>(true);
+    const [defaultType, setDefaultType] = useState<string>("Select a Type");
+    const [defaultIssue, setDefaultIssue] = useState<string>("Select an Issue");
 
-    function capitalize(val: string) {
+    const capitalize = (val: string) => {
         return val.replace(/\w\S*/g, function (txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
-    }
+    };
+
+    const setInput = () => {
+        type.some((item) => {
+            if (parseInt(item.id) === index + 1) setDefaultType(item.value);
+        });
+        issue.some((item) => {
+            if (parseInt(item.id) === index + 1) setDefaultIssue(item.value);
+        });
+
+        if (!type.some((item) => parseInt(item.id) === index + 1))
+            setDefaultType("Select a Type");
+
+        if (!issue.some((item) => parseInt(item.id) === index + 1))
+            setDefaultIssue("Select an Issue");
+    };
+
+    const typeCheck = () => {
+        if (checked && bulkType.length > 1)
+            setDefaultType(capitalize(bulkType));
+        if (checked && bulkIssue.length > 1)
+            setDefaultType(capitalize(bulkIssue));
+        if (type.some((item) => parseInt(item.id) === index + 1))
+            setPopDisabled(false);
+
+        setCheked((current) => !current);
+    };
+
+    useEffect(() => {
+        if (checked && bulkType.length > 1)
+            setDefaultType(capitalize(bulkType));
+        if (checked && bulkIssue.length > 1)
+            setDefaultIssue(capitalize(bulkIssue));
+        if (checked) {
+            setPopDisabled(true);
+        }
+        if (!checked) {
+            setInput();
+        }
+    }, [checked]);
+
+    useEffect(() => {
+        setInput();
+        typeCheck();
+    }, [isModalVisible]);
 
     useEffect(() => {
         setCheked(selected);
@@ -45,7 +105,22 @@ const BulkItem = ({
                 <Row className="item-details">
                     <Space size={16}>
                         <Col>
-                            <Checkbox checked={checked} onChange={onChange} />
+                            <Popconfirm
+                                title="Are you sure you want to override
+                                this item with a new Issue Type?"
+                                okText="Override"
+                                cancelText="Cancel"
+                                disabled={popDisabled}
+                                onConfirm={typeCheck}
+                            >
+                                <Checkbox
+                                    checked={checked}
+                                    onClick={() => {
+                                        popDisabled &&
+                                            setCheked((current) => !current);
+                                    }}
+                                />
+                            </Popconfirm>
                         </Col>
                         <Col>
                             <Tag className="item-details__tag">
@@ -65,11 +140,7 @@ const BulkItem = ({
             <Space size={16}>
                 <Col>
                     <Select
-                        placeholder={
-                            checked && type.length > 1
-                                ? capitalize(type)
-                                : "Select an Type"
-                        }
+                        placeholder={defaultType}
                         className="item-type"
                         disabled
                     >
@@ -104,11 +175,7 @@ const BulkItem = ({
                 </Col>
                 <Col>
                     <Select
-                        placeholder={
-                            checked && issue.length > 1
-                                ? issue
-                                : "Select an Issue"
-                        }
+                        placeholder={defaultIssue}
                         labelInValue
                         className="item-issue"
                         disabled

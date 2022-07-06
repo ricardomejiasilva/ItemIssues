@@ -7,6 +7,7 @@ import { dataSource } from "./Data/ItemData";
 import { issueInfo } from "./Data/IssueInfo";
 import { issueSelection } from "./Data/IssueSelection";
 import { AlignType } from "rc-table/lib/interface";
+import AddItemRow from "./AddItemRow";
 import OpenTab from "./Tabs/OpenTab";
 import SavedTab from "./Tabs/SavedTab";
 import ItemsTab from "./Tabs/ItemsTab";
@@ -27,7 +28,6 @@ import {
     Space,
     Modal,
 } from "antd";
-import BulkModal from "./BulkModal";
 
 interface Input {
     id: string;
@@ -425,6 +425,10 @@ const ItemIssues = (): JSX.Element => {
                                                             </div>
                                                         }
                                                     >
+                                                        <AddItemRow
+                                                            type={type}
+                                                            issue={issue}
+                                                        />
                                                         <ItemsTab
                                                             dataSource={
                                                                 dataSource
@@ -450,11 +454,14 @@ const ItemIssues = (): JSX.Element => {
                                                                 </div>
                                                             }
                                                         >
+                                                            <AddItemRow
+                                                                type={type}
+                                                                issue={issue}
+                                                            />
                                                             <SavedTab
                                                                 savedItems={
                                                                     savedItems
                                                                 }
-                                                                issue={issue}
                                                                 columns={
                                                                     columns
                                                                 }
@@ -484,11 +491,15 @@ const ItemIssues = (): JSX.Element => {
                                                                 </div>
                                                             }
                                                         >
-                                                            <OpenTab
+                                                            <AddItemRow
+                                                                type={type}
                                                                 issue={issue}
+                                                            />
+                                                            <OpenTab
                                                                 openItems={
                                                                     openItems
                                                                 }
+                                                                issue={issue}
                                                                 columns={
                                                                     columns
                                                                 }
@@ -587,7 +598,6 @@ const ItemIssues = (): JSX.Element => {
                                         <SplitItem />
                                     </Row>
                                 </Modal>
-                                <BulkModal />
                             </Layout>
                         </CanceledItemsContext.Provider>
                     </OpenItemsContext.Provider>

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../Styles/ItemIssues.less";
 import BulkItem from "./BulkItem";
 import { issueSelection } from "./Data/IssueSelection";
-import { Record } from "./Data/Interfaces";
+import { Inputs, Record } from "./Data/Interfaces";
 import { dataSource } from "./Data/ItemData";
 import {
     Row,
@@ -14,13 +14,24 @@ import {
     Checkbox,
     Modal,
     Typography,
+    Popconfirm,
 } from "antd";
 
-const BulkModal = () => {
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(true);
+const BulkModal = ({
+    type,
+    issue,
+    isModalVisible,
+    setIsModalVisible,
+}: {
+    type: Inputs[];
+    issue: Inputs[];
+    isModalVisible: boolean;
+    setIsModalVisible: any;
+}) => {
     const [allSelected, setAllSelected] = useState<boolean>(false);
-    const [type, setType] = useState<string>("");
-    const [issue, setIssue] = useState<string>("");
+    const [bulkType, setBulkType] = useState<string>("");
+    const [bulkIssue, setBulkIssue] = useState<string>("");
+    const [popConfirmDisabled, setPopConfirmDisabled] = useState(true);
 
     const { Text } = Typography;
     const { Option } = Select;
@@ -33,6 +44,19 @@ const BulkModal = () => {
             return { value };
         });
     };
+
+    const popCheck = () => {
+        setAllSelected((current) => !current);
+    };
+
+    useEffect(() => {
+        if (type.length > 0) setPopConfirmDisabled(false);
+    }, [isModalVisible]);
+
+    useEffect(() => {
+        if (allSelected) setPopConfirmDisabled(true);
+    }, [allSelected]);
+
     return (
         <Modal
             className="bulk-modal"
@@ -81,7 +105,7 @@ const BulkModal = () => {
                                                 placeholder="Select a Type"
                                                 labelInValue
                                                 onChange={(value) => {
-                                                    setType(value.key);
+                                                    setBulkType(value.key);
                                                 }}
                                             >
                                                 <Option
@@ -136,9 +160,9 @@ const BulkModal = () => {
                                                 placeholder="Select an Issue"
                                                 labelInValue
                                                 onChange={(value) => {
-                                                    setIssue(value.key);
+                                                    setBulkIssue(value.key);
                                                 }}
-                                                options={getSubTypes(type)}
+                                                options={getSubTypes(bulkType)}
                                             ></Select>
                                         </Form.Item>
                                     </Col>
@@ -160,13 +184,27 @@ const BulkModal = () => {
                     <Col className="bulk-modal__container">
                         <Row justify="space-between" align="middle">
                             <Col className="bulk-modal__checkbox">
-                                <Checkbox
-                                    onChange={() => {
-                                        setAllSelected((current) => !current);
-                                    }}
+                                <Popconfirm
+                                    title="Are you sure you want to select all? 
+                                    This action will override 1 item with 
+                                    a new Issue Type."
+                                    okText="Override"
+                                    cancelText="Cancel"
+                                    disabled={popConfirmDisabled}
+                                    onConfirm={popCheck}
                                 >
-                                    Select All
-                                </Checkbox>
+                                    <Checkbox
+                                        checked={allSelected}
+                                        onClick={() => {
+                                            popConfirmDisabled &&
+                                                setAllSelected(
+                                                    (current) => !current
+                                                );
+                                        }}
+                                    >
+                                        Select All
+                                    </Checkbox>
+                                </Popconfirm>
                             </Col>
                             <Col>
                                 <Form.Item
@@ -186,12 +224,17 @@ const BulkModal = () => {
                             </Col>
                         </Row>
                         <Row>
-                            {dataSource.map((item: Record) => (
+                            {dataSource.map((item: Record, index: number) => (
                                 <BulkItem
+                                    key={index}
+                                    index={index}
                                     bulkItem={item}
                                     selected={allSelected}
-                                    issue={issue}
                                     type={type}
+                                    issue={issue}
+                                    bulkIssue={bulkIssue}
+                                    bulkType={bulkType}
+                                    isModalVisible={isModalVisible}
                                 />
                             ))}
                         </Row>
